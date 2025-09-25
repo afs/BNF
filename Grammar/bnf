@@ -1,0 +1,12 @@
+#!/usr/bin/bash
+
+FILE="ebnf.jj"
+DIR="../src/main/java/org/seaborne/bnf/parser/javacc"
+
+(
+    cd "$DIR" ;
+    rm -f TokenMgrError.java ParseException.java \
+       Token.java JavaCharStream.java
+)
+
+javacc -OUTPUT_DIRECTORY=$DIR  -JDK_VERSION=1.8 "${FILE}"

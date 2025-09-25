@@ -1,0 +1,195 @@
+ebnf.jj
+
+Varities
+https://gist.github.com/mindplay-dk/db99d7e76b306aae40b1d1e79e9b81c8
+
+ABNF
+https://datatracker.ietf.org/doc/html/rfc5234
+
+white space in the grammar, no skip.
+Allows for adjactent token, no WS.
+
+W3C
+Character classes: not is ^
+
+#hex
+#x7FFFF
+
+
+
+https://www.w3.org/TR/xml/#sec-notation
+
+EBNF
+Needs precedence on AND and OR
+
+A B | C D is (A B) | (C D)
+
+
+
+== W3C XML EBNF
+
+Backus-Naur Form (EBNF) notation. "Each rule in the grammar defines one symbol, in the form"
+
+symbol ::= expression
+
+----
+== wikipedia EBNF
+
+
+letter = "A" | "B" | "C" | "D" | "E" | "F" | "G"
+       | "H" | "I" | "J" | "K" | "L" | "M" | "N"
+       | "O" | "P" | "Q" | "R" | "S" | "T" | "U"
+       | "V" | "W" | "X" | "Y" | "Z" | "a" | "b"
+       | "c" | "d" | "e" | "f" | "g" | "h" | "i"
+       | "j" | "k" | "l" | "m" | "n" | "o" | "p"
+       | "q" | "r" | "s" | "t" | "u" | "v" | "w"
+       | "x" | "y" | "z" ;
+
+digit = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" ;
+
+symbol = "[" | "]" | "{" | "}" | "(" | ")" | "<" | ">"
+       | "'" | '"' | "=" | "|" | "." | "," | ";" | "-" 
+       | "+" | "*" | "?" | "\n" | "\t" | "\r" | "\f" | "\b" ;
+
+character = letter | digit | symbol | "_" | " " ;
+identifier = letter , { letter | digit | "_" } ;
+
+S = { " " | "\n" | "\t" | "\r" | "\f" | "\b" } ;
+
+terminal = "'" , character - "'" , { character - "'" } , "'"
+         | '"' , character - '"' , { character - '"' } , '"' ;
+
+terminator = ";" | "." ;
+
+term = "(" , S , rhs , S , ")"
+     | "[" , S , rhs , S , "]"
+     | "{" , S , rhs , S , "}"
+     | terminal
+     | identifier ;
+
+factor = term , S , "?"
+       | term , S , "*"
+       | term , S , "+"
+       | term , S , "-" , S , term
+       | term , S ;
+
+concatenation = ( S , factor , S , "," ? ) + ;
+alternation = ( S , concatenation , S , "|" ? ) + ;
+
+rhs = alternation ;
+lhs = identifier ;
+
+rule = lhs , S , "=" , S , rhs , S , terminator ;
+
+grammar = ( S , rule , S ) * ;
+
+== wikipedia ABNF
+
+IETF:
+https://en.wikipedia.org/wiki/Augmented_Backus%E2%80%93Naur_form
+https://www.rfc-editor.org/rfc/rfc5234
+updated by: https://www.rfc-editor.org/rfc/rfc7405
+
+== wikipedia BNF
+<syntax>         ::= <rule> | <rule> <syntax>
+<rule>           ::= <opt-whitespace> "<" <rule-name> ">" <opt-whitespace> "::=" <opt-whitespace> <expression> <line-end>
+<opt-whitespace> ::= " " <opt-whitespace> | ""
+<expression>     ::= <list> | <list> <opt-whitespace> "|" <opt-whitespace> <expression>
+<line-end>       ::= <opt-whitespace> <EOL> | <line-end> <line-end>
+<list>           ::= <term> | <term> <opt-whitespace> <list>
+<term>           ::= <literal> | "<" <rule-name> ">"
+<literal>        ::= '"' <text1> '"' | "'" <text2> "'"
+<text1>          ::= "" | <character1> <text1>
+<text2>          ::= "" | <character2> <text2>
+<character>      ::= <letter> | <digit> | <symbol>
+<letter>         ::= "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J" | "K" | "L" | "M" | "N" | "O" | "P" | "Q" | "R" | "S" | "T" | "U" | "V" | "W" | "X" | "Y" | "Z" | "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" | "j" | "k" | "l" | "m" | "n" | "o" | "p" | "q" | "r" | "s" | "t" | "u" | "v" | "w" | "x" | "y" | "z"
+<digit>          ::= "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
+<symbol>         ::= "|" | " " | "!" | "#" | "$" | "%" | "&" | "(" | ")" | "*" | "+" | "," | "-" | "." | "/" | ":" | ";" | ">" | "=" | "<" | "?" | "@" | "[" | "\" | "]" | "^" | "_" | "`" | "{" | "}" | "~"
+<character1>     ::= <character> | "'"
+<character2>     ::= <character> | '"'
+<rule-name>      ::= <letter> | <rule-name> <rule-char>
+<rule-char>      ::= <letter> | <digit> | "-"
+
+
+
+
+
+XML ---
+
+
+6 Notation
+
+The formal grammar of XML is given in this specification using a simple Extended
+Backus-Naur Form (EBNF) notation. Each rule in the grammar defines one symbol, in the form
+
+symbol ::= expression
+
+Symbols are written with an initial capital letter if they are the start symbol of a
+regular language, otherwise with an initial lowercase letter. Literal strings are quoted.
+
+Within the expression on the right-hand side of a rule, the following expressions are used
+to match strings of one or more characters:
+
+#xN
+
+where N is a hexadecimal integer, the expression matches the character whose number (code
+point) in ISO/IEC 10646 is N. The number of leading zeros in the #xN form is
+insignificant.
+
+[a-zA-Z], [#xN-#xN]
+
+matches any Char with a value in the range(s) indicated (inclusive).
+
+[abc], [#xN#xN#xN]
+
+matches any Char with a value among the characters enumerated. Enumerations and ranges can
+be mixed in one set of brackets.
+
+[^a-z], [^#xN-#xN]
+
+matches any Char with a value outside the range indicated.
+
+[^abc], [^#xN#xN#xN]
+
+matches any Char with a value not among the characters given. Enumerations and ranges of
+forbidden values can be mixed in one set of brackets.
+
+"string"
+matches a literal string matching that given inside the double quotes.
+
+'string'
+matches a literal string matching that given inside the single quotes.
+
+These symbols may be combined to match more complex patterns as follows, where A and B represent simple expressions:
+
+(expression)
+expression is treated as a unit and may be combined as described in this list.
+
+A?
+matches A or nothing; optional A.
+
+A B
+matches A followed by B. This operator has higher precedence than alternation; thus A B | C D is identical to (A B) | (C D).
+
+A | B
+matches A or B.
+
+A - B
+matches any string that matches A but does not match B.
+
+A+
+matches one or more occurrences of A. Concatenation has higher precedence than alternation; thus A+ | B+ is identical to (A+) | (B+).
+
+A*
+matches zero or more occurrences of A. Concatenation has higher precedence than alternation; thus A* | B* is identical to (A*) | (B*).
+
+Other notations used in the productions are:
+
+/* ... */
+comment.
+
+[ wfc: ... ]
+well-formedness constraint; this identifies by name a constraint on well-formed documents associated with a production.
+
+[ vc: ... ]
+validity constraint; this identifies by name a constraint on valid documents associated with a production.
