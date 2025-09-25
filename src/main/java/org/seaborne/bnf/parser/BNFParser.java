@@ -18,35 +18,125 @@
 
 package org.seaborne.bnf.parser;
 
+import static java.lang.String.format;
+
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.List;
+
+import org.seaborne.bnf.Grammar;
+import org.seaborne.bnf.parser.javacc.ParseException;
+
 public class BNFParser {
 
-    public void startGrammar() {}
-    public void emitRule(Rule rule) { }
-    public void finishGrammar() {}
-
-    public void startRule() {}
-    public Rule createRule(Identifier identifier, Expression expr) { return null; }
-    public void finishRule() {}
-
-    public void startExpression() {}
-    public void finishExpression() {}
-
-    public void startAlternatives() {}
-    public void emitAlternativesElement(Expression expr) { }
-    public Expression collectedAlternatives() { return null; }
-    public void finishAlternatives() {}
-
-    public void startSequence() {}
-    public void emitSequenceElement(Expression expr) { }
-    public Expression collectedSequence() { return null; }
-    public void finishSequence() {}
+    public Grammar getGrammar() { return Grammar.create(accRules); }
 
 
-    public Expression createExprZeroOrOne(Expression expr) { return null; }
-    public Expression createExprZeroOrMore(Expression expr) { return null; }
-    public Expression createExprOneOrMore(Expression expr) { return null; }
+    private List<Rule> accRules = new ArrayList<>();
+    protected void startGrammar() {}
+    protected void emitRule(Rule rule) { accRules.add(rule); }
+    protected void finishGrammar() {}
 
-    public Identifier createNonTerminal(String string) { return null; }
-    public Identifier createWord(String string) { return null; }
-    public Expression createQuotedString(String string) { return null; }
+    protected void startRule() {}
+
+    protected Rule createRule(String parsedLabel, Identifier identifier, Expression expr) {
+        //String label = removeFirstLast(parsedLabel);
+        return Rule.create(parsedLabel, identifier, expr);
+    }
+
+    protected void finishRule() {}
+
+    protected void startExpression() {}
+    protected void finishExpression() {}
+
+    // This could happen on the parse stack.
+    protected void startAlternatives() {
+        alternativeAccumulators.addFirst(new ArrayList<>());
+    }
+
+    private Deque<List<Expression>> alternativeAccumulators = new ArrayDeque<>();
+    protected void emitAlternativesElement(Expression expr) {
+        alternativeAccumulators.getFirst().add(expr);
+    }
+
+    protected Expression collectedAlternatives() {
+        return Alternatives.create(alternativeAccumulators.getFirst());
+    }
+
+    protected void finishAlternatives() {
+        alternativeAccumulators.removeFirst();
+    }
+
+    private Deque<List<Expression>> sequenceAccumulators = new ArrayDeque<>();
+    protected void startSequence() { sequenceAccumulators.addFirst(new ArrayList<>()); }
+    protected void emitSequenceElement(Expression expr) { sequenceAccumulators.getFirst().add(expr); }
+    protected Expression collectedSequence() { return Sequence.create(sequenceAccumulators.getFirst()); }
+    protected void finishSequence() { sequenceAccumulators.removeFirst(); }
+
+
+    protected Expression createExprZeroOrOne(Expression expr) {
+        return ExprZeroOrOne.create(expr);
+    }
+
+    protected Expression createExprZeroOrMore(Expression expr) {
+        return ExprZeroOrMore.create(expr);
+    }
+
+    protected Expression createExprOneOrMore(Expression expr) {
+        return ExprOneOrMore.create(expr);
+    }
+
+    protected Identifier createNonTerminal(String string) {
+        return new Identifier(removeFirstLast(string));
+    }
+
+    protected Identifier createWord(String string) {
+        return new Identifier(string);
+    }
+
+    protected Expression createPrimary(Expression expr) {
+        return new Primary(expr);
+    }
+
+    // Esacpes.
+
+    protected Expression createQuotedString(String string) {
+        return new QuotedString(removeFirstLast(string));
+    }
+
+    protected Expression createCharacter(String string) {
+        return new HexCharacter(string);
+    }
+
+    protected Expression createCharacterRange(String string1, String string2, boolean isNegative) {
+        return new CharRange(string1, string2, isNegative);
+    }
+
+    // Replace by lexical state.
+    protected String wordToRangeChar(String string, int line, int column) throws ParseException {
+        if ( string.length() != 1 )
+            throw new ParseException(format("[%d, %d] Not a range character '%s'", line, column, string));
+        return string;
+    }
+
+//    protected Expression createPositiveCharRange(String string1, String string2) {
+//        return new CharRange(string1, string2);
+//    }
+//
+//    protected Expression createPositiveHexCharRange(String string1, String string2) {
+//        return new CharRange(string1, string2);
+//    }
+
+    /**
+     * Remove the first and last characters of the argument.
+     *
+     * The argument is assumed to be validated, e.g. does boundary
+     * characters and is at least 2 characters long.
+     */
+    private static String removeFirstLast(String string) {
+        if ( string == null || string.length() < 2 )
+            return null;
+        return string.substring(1, string.length()-1);
+    }
 }

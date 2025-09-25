@@ -18,30 +18,8 @@
 
 package org.seaborne.bnf.parser;
 
-public class Identifier extends Expression {
-
-    private final String identifier;
-
-    public Identifier(String identifier) {
-        this.identifier = identifier;
-    }
-
-    @Override
-    public boolean printAtomic(PrintFrame pFrame) {
-        return true;
-    }
-
-    public String getString() {
-        return identifier;
-    }
-
-    @Override
-    public void printStructure(PrintFrame pFrame) {
-        pFrame.out().printf("(id %s)", identifier);
-    }
-
-    @Override
-    public void printBNF(PrintFrame pFrame) {
-        pFrame.out().print(identifier);
-    }
+public class Internal {
+    public static String firstIndent = "";
+    public static String indent = "    ";
+    public static String dftLabel = "[_]";
 }

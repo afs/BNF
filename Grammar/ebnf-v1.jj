@@ -1,0 +1,218 @@
+// Terminator version
+// Multiple line rules.
+// Rule separators : ";" or "."
+
+options
+{
+    // \ u processed after parsing in strings and IRIs, nowhere else.
+    JAVA_UNICODE_ESCAPE   = false ;
+    UNICODE_INPUT         = true ;
+
+  STATIC                = false ;
+//  DEBUG_PARSER          = true ;
+//  DEBUG_TOKEN_MANAGER   = true ;
+}
+
+
+PARSER_BEGIN(EBNFParser)
+
+package org.seaborne.bnf.parser.javacc;
+
+import org.seaborne.bnf.parser.*;
+
+public class EBNFParser extends BNFParser {}
+
+PARSER_END(EBNFParser)
+
+
+SKIP : { <LINE_COMMENT: "//" (~["\n","\r"])* > }
+// Conflicts with hex character
+//SKIP : { <HASH_COMMENT: "#" (~["\n","\r"])* > }
+
+//SKIP :  { " " | "\t" | "\r" | "\n" }
+
+
+SKIP : { <WS: " " | "\t" | "\r" | "\n" > }
+
+TOKEN : {
+  // Horizontal whitespace
+//  <WSP: (" " | "\t")+ >
+// | <CR: "\n" >         // 0x0D - 13
+// | <LF: "\f" >         // 0x0A - 10 - NL (if single character)
+// | <CRLF: "\r\n">
+
+   < ASSIGN:  "::=" >
+|  < OR:      "|" >
+|  < STAR:    "*" >
+|  < PLUS:    "+" >
+|  < QUERY:   "?" >
+|  < LPAREN:  "(" >
+|  < RPAREN:  ")" >
+|  < LBRACK:  "[" >
+|  < RBRACK:  "]" >
+|  < LBRACE:  "{" >
+|  < RBRACE:  "}" >
+|  < SEMI:    ";" >
+|  < DOT:     "." >
+
+|  < NONTERMINAL:    "<" (~[">", "\n", "\r"])* ">" >
+
+|  < ECHAR:          "\\" ( "t"|"b"|"n"|"r"| "\\"|"\""|"'") >
+|  < #HEX:           ["0"-"9"] | ["A"-"F"] | ["a"-"f"] >
+|  < #UCHAR:         <UCHAR4> | <UCHAR8> >
+|  < #UCHAR4:        "\\" "u" <HEX> <HEX> <HEX> <HEX> >
+|  < #UCHAR8:        "\\" "U" <HEX> <HEX> <HEX> <HEX> <HEX> <HEX> <HEX> <HEX> >
+|  < QUOTED_STRING:  <QSTRING1> | <QSTRING2> >
+|  < QSTRING1:       ( "'" ( (~["'","\\","\n","\r"]) | <ECHAR> | <UCHAR> )* "'" ) >
+|  < QSTRING2:       ( "\"" ( (~["\"","\\","\n","\r"]) | <ECHAR> | <UCHAR> )* "\"" ) >
+
+//|  <LABEL: <LBRACK> (~["\n","\r"])* <RBRACK> >
+
+// Needs work for i18n. Exclude surrogates, U+FFFE, U+FFFF
+// Maybe only BMP (java)
+|  < #AZ : (["A"-"Z"] | ["a"-"z"]) >
+|  < #DIGITS:  ["0"-"9"] >
+|  < INTEGER: (<DIGITS>)+ >
+|  < #AZN : ( <AZ> | <DIGITS> ) >
+
+|  < HEX_CHAR: "#x" (<HEX>)+ >
+
+// Character in quotes
+// Same as quoted string
+//|  < CHAR: "\"" <AZN> "\"" >
+
+// Last
+|  < WORD:  <AZ> (("_" | <AZN> )* <AZN> )? >
+}
+
+void Unit() : {} { Grammar() }
+
+void Grammar() : { Rule rule; }
+{
+  { startGrammar(); }
+  (
+    rule = Rule() { emitRule(rule); }
+    ( RuleSeparator()  (rule = Rule() { emitRule(rule); })? )*
+    
+  )?
+  { finishGrammar(); }
+  <EOF>
+}
+
+void RuleSeparator() : {}
+{
+    <SEMI> | <DOT>
+}
+
+Rule Rule() : { Identifier identifier ; Expression expr; Rule rule; Token t; String label = null; }
+{
+    { startRule(); }
+    // Optional label.
+    ( label = Label())?
+    identifier = Identifier() <ASSIGN> expr = Expression()
+    { rule = createRule(label, identifier, expr);
+      finishRule();
+      return rule;
+    }
+}
+
+String Label() : { String str = ""; Token t; }
+{
+    // HACK
+    "@"
+    (t = <INTEGER> { str = t.image; })?
+    
+//     <LBRACK>
+//     (t = <INTEGER> { str = t.image; })?
+//     <RBRACK>
+    { return str; }
+}
+
+// LHS
+Identifier Identifier() : { Token t; }
+{
+    (
+      t = <NONTERMINAL> { return createNonTerminal(t.image); }
+    |
+      t = <WORD>        { return createWord(t.image); }
+    )
+ }
+
+Expression Expression() : { Expression expr;}
+{
+    { startExpression() ; } 
+    expr = Alternatives()
+    { finishExpression() ; }
+    { return expr; }
+}
+
+Expression Alternatives() : { Expression expr ; }
+{
+    { startAlternatives() ; } 
+    expr = Sequence() { emitAlternativesElement(expr); }
+    ( <OR> expr = Sequence() { emitAlternativesElement(expr); } )*
+    { expr = collectedAlternatives(); }
+    { finishAlternatives() ; }
+    { return expr; }
+}
+
+Expression Sequence() : { Expression expr; }
+{
+    { startSequence() ; }
+    ( expr = Unary() { emitSequenceElement(expr); } )*
+    { expr = collectedSequence(); }
+    { finishSequence() ; }
+    { return expr; }
+}
+
+Expression Unary() : { Expression expr; Token mod = null; }
+{
+    expr = Primary()
+      ( mod = <QUERY> { expr = createExprZeroOrOne(expr); }
+      | mod = <STAR>  { expr = createExprZeroOrMore(expr); }
+      | mod = <PLUS>  { expr = createExprOneOrMore(expr); }
+      )?
+    { return expr; }
+}
+
+Expression Primary() : { Token t; Expression expr; }
+{
+    (
+      t = <NONTERMINAL> { return createNonTerminal(t.image); }
+    |
+      t = <WORD>        { return createWord(t.image); }
+    |
+      t = <QUOTED_STRING> { return createQuotedString(t.image); }
+      // CharacterRange, CharacterNumericRange
+    |
+      <LPAREN> expr = Expression() <RPAREN> { return createPrimary(expr); }
+      // Other {} []
+    |
+      expr = Character() { return expr; }
+    |
+      expr = CharacterRange() { return expr; }
+    )
+}
+
+Expression Character() : { Token t; }
+{
+   t = <HEX_CHAR> { return createCharacter(t.image); }
+}
+
+Expression CharacterRange() : { Token t1; Token t2; }
+{
+  <LBRACK>
+  t1=<HEX_CHAR>
+  "-"
+  t2=<HEX_CHAR> 
+  <RBRACK>
+  { return createPositiveHexCharRange(t1.image, t2.image); }
+}
+
+/*
+# Local Variables:
+# tab-width: 4
+# indent-tabs-mode: nil
+# comment-default-style: "//"
+# End:
+*/

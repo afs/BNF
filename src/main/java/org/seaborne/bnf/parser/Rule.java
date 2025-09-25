@@ -20,4 +20,74 @@ package org.seaborne.bnf.parser;
 
 public class Rule {
 
+    public static Rule create(String label, Identifier identifier, Expression expr) {
+        // Check label
+        return new Rule(label, identifier, expr);
+    }
+
+    private final String label;
+    private final Identifier identifier;
+    private final Expression expression;
+    //private final String defaultLabel = "[_]";
+    private final String defaultLabel = "_";
+
+    public Rule(String label, Identifier identifier, Expression expr) {
+        this.label = label;
+        this.identifier = identifier;
+        this.expression = expr;
+    }
+
+//    // Without recording shape.
+//    public Rule pure() {
+//        // No "Primary"
+//    }
+
+    /**
+     * Non-standard, non-parable format that makes the structure (sequences and alternations) explicit.
+     */
+    public void printStructure(PrintFrame pFrame) {
+        printLabel(pFrame, label);
+        pFrame.out().print(identifier.getString());
+        pFrame.out().print(" ::= ");
+        PrintFrame pFrame2 = pFrame;//.inc();
+        expression.printStructure(pFrame2);
+    }
+
+    /**
+     * EBNF
+     */
+    public void printEBNF(PrintFrame pFrame) {
+        printLabel(pFrame, label);
+        pFrame.out().print(identifier.getString());
+        pFrame.out().print(" ::= ");
+        PrintFrame pFrame2 = pFrame;//.inc();
+
+        // No need for brackets here
+        expression.printBNF(pFrame2);
+    }
+
+    private void printLabel(PrintFrame pFrame, String label) {
+        if ( label == null && defaultLabel == null )
+            return;
+
+        String x;
+        if (label != null )
+            x = String.format("[%s] ", label);
+            //x = String.format("@%s", label);
+        else
+            x = defaultLabel+" ";
+        pFrame.out().printf(pFrame.labelFmt(), x);
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public Identifier getIdentifier() {
+        return identifier;
+    }
+
+    public Expression getExpression() {
+        return expression;
+    }
 }

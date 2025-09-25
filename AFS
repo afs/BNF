@@ -1,4 +1,21 @@
+
+==
+
 ebnf.jj
+
+Features:
+  Labels. [0] A ::=
+  Multiline rules
+    + Continuation character "\"
+    (+ Terminator)
+    (+ Required label (can be repeated e.g. []))
+
+  2*3 =?
+
+  
+----
+https://www.w3.org/TR/xml/#sec-notation
+
 
 Varities
 https://gist.github.com/mindplay-dk/db99d7e76b306aae40b1d1e79e9b81c8
@@ -7,17 +24,33 @@ ABNF
 https://datatracker.ietf.org/doc/html/rfc5234
 
 white space in the grammar, no skip.
-Allows for adjactent token, no WS.
+Allows for adjacent token, no WS.
 
 W3C
 Character classes: not is ^
 
+== Later: lexical states for ranges.
+
+Must use context sensitive regex
+==>
+
+
+TOKEN { < LBRACK: "[" > :WithinRange }
+
+TOKEN { 
+
+<WithinRange>
+TOKEN {
+   < CHAR : ["a"-"z"] | ["A"-"Z"] | ["0"-"9"] >
+|  < #HEX:  ["0"-"9"] | ["A"-"F"] | ["a"-"f"] >
+|  < HEX_CHAR: "#x" (<HEX>)+ >
+|  < RBRACK: "[" > :DEFAULT }
+}
+
 #hex
 #x7FFFF
 
-
-
-https://www.w3.org/TR/xml/#sec-notation
+------------------------------------------------------------------
 
 EBNF
 Needs precedence on AND and OR
@@ -34,7 +67,6 @@ symbol ::= expression
 
 ----
 == wikipedia EBNF
-
 
 letter = "A" | "B" | "C" | "D" | "E" | "F" | "G"
        | "H" | "I" | "J" | "K" | "L" | "M" | "N"
@@ -84,6 +116,18 @@ rule = lhs , S , "=" , S , rhs , S , terminator ;
 grammar = ( S , rule , S ) * ;
 
 == wikipedia ABNF
+
+   ABNF - %xNNNN
+   Range is %xNN-NN
+   
+   rule =
+   rule =/
+
+   optional:
+     2*3 element
+     [ ]
+     *1 element
+     0*1 element
 
 IETF:
 https://en.wikipedia.org/wiki/Augmented_Backus%E2%80%93Naur_form

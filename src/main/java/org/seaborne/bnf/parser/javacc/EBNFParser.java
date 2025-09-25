@@ -10,47 +10,132 @@ public class EBNFParser extends BNFParser implements EBNFParserConstants {
     Grammar();
 }
 
+  final public void EOL() throws ParseException {
+    jj_consume_token(EOL);
+}
+
   final public void Grammar() throws ParseException {Rule rule;
+    BlankLines();
 startGrammar();
-    switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
-    case NONTERMINAL:
-    case WORD:{
+    label_1:
+    while (true) {
+      switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+      case LBRACK:
+      case NONTERMINAL:
+      case WORD:{
+        ;
+        break;
+        }
+      default:
+        jj_la1[0] = jj_gen;
+        break label_1;
+      }
       rule = Rule();
 emitRule(rule);
-      label_1:
-      while (true) {
-        switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
-        case SEMI:{
-          ;
-          break;
-          }
-        default:
-          jj_la1[0] = jj_gen;
-          break label_1;
-        }
-        jj_consume_token(SEMI);
-        rule = Rule();
-emitRule(rule);
-      }
-      jj_consume_token(DOT);
+      BlankLines();
+    }
+    jj_consume_token(0);
+finishGrammar();
+}
+
+  final public Rule Rule() throws ParseException {Identifier identifier ; Expression expr; Rule rule; String label = null;
+startRule();
+    switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+    case LBRACK:{
+      label = Label();
       break;
       }
     default:
       jj_la1[1] = jj_gen;
       ;
     }
-finishGrammar();
-    jj_consume_token(0);
-}
-
-  final public Rule Rule() throws ParseException {Identifier identifier ; Expression expr; Rule rule;
-startRule();
     identifier = Identifier();
     jj_consume_token(ASSIGN);
     expr = Expression();
-rule = createRule(identifier, expr);
+    switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+    case EOL:{
+      EOL();
+      break;
+      }
+    case 0:{
+      jj_consume_token(0);
+      break;
+      }
+    default:
+      jj_la1[2] = jj_gen;
+      jj_consume_token(-1);
+      throw new ParseException();
+    }
+rule = createRule(label, identifier, expr);
       finishRule();
-      {if ("" != null) return rule;}
+{if ("" != null) return rule;}
+    throw new Error("Missing return statement in function");
+}
+
+  final public void BlankLines() throws ParseException {
+    label_2:
+    while (true) {
+      switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+      case EOL:{
+        ;
+        break;
+        }
+      default:
+        jj_la1[3] = jj_gen;
+        break label_2;
+      }
+      EOL();
+    }
+}
+
+  final public String Label() throws ParseException {String str = "";
+    jj_consume_token(LBRACK);
+    switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+    case INTEGER:
+    case WORD:{
+      switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+      case INTEGER:{
+        str = Integer();
+        break;
+        }
+      case WORD:{
+        str = Word();
+        break;
+        }
+      default:
+        jj_la1[4] = jj_gen;
+        jj_consume_token(-1);
+        throw new ParseException();
+      }
+      break;
+      }
+    default:
+      jj_la1[5] = jj_gen;
+      ;
+    }
+    jj_consume_token(RBRACK);
+{if ("" != null) return str;}
+    throw new Error("Missing return statement in function");
+}
+
+// LHS
+  final public Identifier Identifier() throws ParseException {Token t; String str;
+    switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+    case NONTERMINAL:{
+      t = jj_consume_token(NONTERMINAL);
+{if ("" != null) return createNonTerminal(t.image);}
+      break;
+      }
+    case WORD:{
+      str = Word();
+{if ("" != null) return createWord(str);}
+      break;
+      }
+    default:
+      jj_la1[6] = jj_gen;
+      jj_consume_token(-1);
+      throw new ParseException();
+    }
     throw new Error("Missing return statement in function");
 }
 
@@ -66,7 +151,7 @@ finishExpression() ;
 startAlternatives() ;
     expr = Sequence();
 emitAlternativesElement(expr);
-    label_2:
+    label_3:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
       case OR:{
@@ -74,8 +159,8 @@ emitAlternativesElement(expr);
         break;
         }
       default:
-        jj_la1[2] = jj_gen;
-        break label_2;
+        jj_la1[7] = jj_gen;
+        break label_3;
       }
       jj_consume_token(OR);
       expr = Sequence();
@@ -87,28 +172,31 @@ finishAlternatives() ;
     throw new Error("Missing return statement in function");
 }
 
+// At least one element.
   final public Expression Sequence() throws ParseException {Expression expr;
 startSequence() ;
-    label_3:
+    label_4:
     while (true) {
+      expr = Unary();
+emitSequenceElement(expr);
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
       case LPAREN:
+      case LBRACK:
       case NONTERMINAL:
       case QUOTED_STRING:
+      case HEX_CHAR:
       case WORD:{
         ;
         break;
         }
       default:
-        jj_la1[3] = jj_gen;
-        break label_3;
+        jj_la1[8] = jj_gen;
+        break label_4;
       }
-      expr = Unary();
-emitSequenceElement(expr);
     }
 expr = collectedSequence();
-finishSequence() ;
-{if ("" != null) return expr;}
+      finishSequence() ;
+      {if ("" != null) return expr;}
     throw new Error("Missing return statement in function");
 }
 
@@ -135,21 +223,21 @@ expr = createExprOneOrMore(expr);
         break;
         }
       default:
-        jj_la1[4] = jj_gen;
+        jj_la1[9] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
       break;
       }
     default:
-      jj_la1[5] = jj_gen;
+      jj_la1[10] = jj_gen;
       ;
     }
 {if ("" != null) return expr;}
     throw new Error("Missing return statement in function");
 }
 
-  final public Expression Primary() throws ParseException {Token t; Expression expr;
+  final public Expression Primary() throws ParseException {String str; Token t; Expression expr;
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case NONTERMINAL:{
       t = jj_consume_token(NONTERMINAL);
@@ -157,8 +245,8 @@ expr = createExprOneOrMore(expr);
       break;
       }
     case WORD:{
-      t = jj_consume_token(WORD);
-{if ("" != null) return createWord(t.image);}
+      str = Word();
+{if ("" != null) return createWord(str);}
       break;
       }
     case QUOTED_STRING:{
@@ -170,35 +258,101 @@ expr = createExprOneOrMore(expr);
       jj_consume_token(LPAREN);
       expr = Expression();
       jj_consume_token(RPAREN);
+{if ("" != null) return createPrimary(expr);}
+      break;
+      }
+    case HEX_CHAR:{
+      expr = Character();
+{if ("" != null) return expr;}
+      break;
+      }
+    case LBRACK:{
+      expr = CharacterRange();
 {if ("" != null) return expr;}
       break;
       }
     default:
-      jj_la1[6] = jj_gen;
+      jj_la1[11] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
     throw new Error("Missing return statement in function");
 }
 
-// LHS
-  final public Identifier Identifier() throws ParseException {Token t;
+  final public Expression Character() throws ParseException {Token t;
+    t = jj_consume_token(HEX_CHAR);
+{if ("" != null) return createCharacter(t.image);}
+    throw new Error("Missing return statement in function");
+}
+
+  final public Expression CharacterRange() throws ParseException {String s1; String s2; boolean isNegative = false;
+    jj_consume_token(LBRACK);
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
-    case NONTERMINAL:{
-      t = jj_consume_token(NONTERMINAL);
-{if ("" != null) return createNonTerminal(t.image);}
-      break;
-      }
-    case WORD:{
-      t = jj_consume_token(WORD);
-{if ("" != null) return createWord(t.image);}
+    case CARAT:{
+      jj_consume_token(CARAT);
+isNegative = true;
       break;
       }
     default:
-      jj_la1[7] = jj_gen;
+      jj_la1[12] = jj_gen;
+      ;
+    }
+    s1 = RangeElement();
+    jj_consume_token(33);
+    s2 = RangeElement();
+    jj_consume_token(RBRACK);
+{if ("" != null) return createCharacterRange(s1, s2, isNegative);}
+    throw new Error("Missing return statement in function");
+}
+
+  final public String RangeElement() throws ParseException {String str;
+    switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+    case HEX_CHAR:{
+      str = HexChar();
+{if ("" != null) return str;}
+      break;
+      }
+    case WORD:{
+      str = Word();
+{if ("" != null) return wordToRangeChar(str, token.beginLine, token.beginColumn);}
+      break;
+      }
+    case INTEGER:{
+      str = Integer();
+{if ("" != null) return wordToRangeChar(str, token.beginLine, token.beginColumn);}
+      break;
+      }
+    default:
+      jj_la1[13] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
+    throw new Error("Missing return statement in function");
+}
+
+// Abstract away from the concrete token.
+
+// String WS() : { }
+// {
+// }
+  final public 
+
+
+String HexChar() throws ParseException {Token t; String str;
+    t = jj_consume_token(HEX_CHAR);
+{if ("" != null) return t.image;}
+    throw new Error("Missing return statement in function");
+}
+
+  final public String Word() throws ParseException {Token t; String str;
+    t = jj_consume_token(WORD);
+{if ("" != null) return t.image;}
+    throw new Error("Missing return statement in function");
+}
+
+  final public String Integer() throws ParseException {Token t; String str;
+    t = jj_consume_token(INTEGER);
+{if ("" != null) return t.image;}
     throw new Error("Missing return statement in function");
 }
 
@@ -211,13 +365,18 @@ expr = createExprOneOrMore(expr);
   public Token jj_nt;
   private int jj_ntk;
   private int jj_gen;
-  final private int[] jj_la1 = new int[8];
+  final private int[] jj_la1 = new int[14];
   static private int[] jj_la1_0;
+  static private int[] jj_la1_1;
   static {
 	   jj_la1_init_0();
+	   jj_la1_init_1();
 	}
 	private static void jj_la1_init_0() {
-	   jj_la1_0 = new int[] {0x8000,0x10020000,0x20,0x10820200,0x1c0,0x1c0,0x10820200,0x10020000,};
+	   jj_la1_0 = new int[] {0x40800,0x800,0x9,0x8,0x20000000,0x20000000,0x40000,0x20,0x81040a00,0x1c0,0x1c0,0x81040a00,0x20000,0xa0000000,};
+	}
+	private static void jj_la1_init_1() {
+	   jj_la1_1 = new int[] {0x1,0x0,0x0,0x0,0x1,0x1,0x1,0x0,0x1,0x0,0x0,0x1,0x0,0x1,};
 	}
 
   /** Constructor with InputStream. */
@@ -231,7 +390,7 @@ expr = createExprOneOrMore(expr);
 	 token = new Token();
 	 jj_ntk = -1;
 	 jj_gen = 0;
-	 for (int i = 0; i < 8; i++) jj_la1[i] = -1;
+	 for (int i = 0; i < 14; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -245,7 +404,7 @@ expr = createExprOneOrMore(expr);
 	 token = new Token();
 	 jj_ntk = -1;
 	 jj_gen = 0;
-	 for (int i = 0; i < 8; i++) jj_la1[i] = -1;
+	 for (int i = 0; i < 14; i++) jj_la1[i] = -1;
   }
 
   /** Constructor. */
@@ -255,7 +414,7 @@ expr = createExprOneOrMore(expr);
 	 token = new Token();
 	 jj_ntk = -1;
 	 jj_gen = 0;
-	 for (int i = 0; i < 8; i++) jj_la1[i] = -1;
+	 for (int i = 0; i < 14; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -273,7 +432,7 @@ expr = createExprOneOrMore(expr);
 	 token = new Token();
 	 jj_ntk = -1;
 	 jj_gen = 0;
-	 for (int i = 0; i < 8; i++) jj_la1[i] = -1;
+	 for (int i = 0; i < 14; i++) jj_la1[i] = -1;
   }
 
   /** Constructor with generated Token Manager. */
@@ -282,7 +441,7 @@ expr = createExprOneOrMore(expr);
 	 token = new Token();
 	 jj_ntk = -1;
 	 jj_gen = 0;
-	 for (int i = 0; i < 8; i++) jj_la1[i] = -1;
+	 for (int i = 0; i < 14; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -291,7 +450,7 @@ expr = createExprOneOrMore(expr);
 	 token = new Token();
 	 jj_ntk = -1;
 	 jj_gen = 0;
-	 for (int i = 0; i < 8; i++) jj_la1[i] = -1;
+	 for (int i = 0; i < 14; i++) jj_la1[i] = -1;
   }
 
   private Token jj_consume_token(int kind) throws ParseException {
@@ -342,21 +501,24 @@ expr = createExprOneOrMore(expr);
   /** Generate ParseException. */
   public ParseException generateParseException() {
 	 jj_expentries.clear();
-	 boolean[] la1tokens = new boolean[29];
+	 boolean[] la1tokens = new boolean[34];
 	 if (jj_kind >= 0) {
 	   la1tokens[jj_kind] = true;
 	   jj_kind = -1;
 	 }
-	 for (int i = 0; i < 8; i++) {
+	 for (int i = 0; i < 14; i++) {
 	   if (jj_la1[i] == jj_gen) {
 		 for (int j = 0; j < 32; j++) {
 		   if ((jj_la1_0[i] & (1<<j)) != 0) {
 			 la1tokens[j] = true;
 		   }
+		   if ((jj_la1_1[i] & (1<<j)) != 0) {
+			 la1tokens[32+j] = true;
+		   }
 		 }
 	   }
 	 }
-	 for (int i = 0; i < 29; i++) {
+	 for (int i = 0; i < 34; i++) {
 	   if (la1tokens[i]) {
 		 jj_expentry = new int[1];
 		 jj_expentry[0] = i;

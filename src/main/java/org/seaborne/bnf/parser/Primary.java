@@ -18,30 +18,35 @@
 
 package org.seaborne.bnf.parser;
 
-public class Identifier extends Expression {
+/**
+ * Input grammar had "( ... )" which we preserve.
+ */
+public class Primary extends Expression {
 
-    private final String identifier;
+    private final Expression expr;
 
-    public Identifier(String identifier) {
-        this.identifier = identifier;
+    public Primary(Expression expr) {
+        this.expr = expr;
     }
 
     @Override
     public boolean printAtomic(PrintFrame pFrame) {
+        // Does not need addition parentheses
         return true;
-    }
-
-    public String getString() {
-        return identifier;
     }
 
     @Override
     public void printStructure(PrintFrame pFrame) {
-        pFrame.out().printf("(id %s)", identifier);
+        pFrame.out().print("(primary ");
+        expr.printBNF(pFrame);
+        pFrame.out().print(" )");
     }
 
     @Override
     public void printBNF(PrintFrame pFrame) {
-        pFrame.out().print(identifier);
+        pFrame.out().print("( ");
+        expr.printBNF(pFrame);
+        pFrame.out().print(" )");
     }
+
 }

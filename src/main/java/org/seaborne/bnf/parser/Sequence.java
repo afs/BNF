@@ -18,12 +18,20 @@
 
 package org.seaborne.bnf.parser;
 
-public class Identifier extends Expression {
+import java.util.List;
 
-    private final String identifier;
+public class Sequence extends Expression {
 
-    public Identifier(String identifier) {
-        this.identifier = identifier;
+    public static Expression create(List<Expression> exprs) {
+        if ( exprs.size() == 1 )
+            return exprs.getFirst();
+        return new Sequence(exprs);
+    }
+
+    public final List<Expression> sequence;
+
+    private Sequence(List<Expression> exprs) {
+        sequence = List.copyOf(exprs);
     }
 
     @Override
@@ -31,17 +39,13 @@ public class Identifier extends Expression {
         return true;
     }
 
-    public String getString() {
-        return identifier;
-    }
-
     @Override
     public void printStructure(PrintFrame pFrame) {
-        pFrame.out().printf("(id %s)", identifier);
+        PrintFrame.printListExpressions(pFrame, "Seq", sequence);
     }
 
     @Override
     public void printBNF(PrintFrame pFrame) {
-        pFrame.out().print(identifier);
+        PrintFrame.printList(pFrame, " ", sequence);
     }
 }

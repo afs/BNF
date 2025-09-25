@@ -18,30 +18,34 @@
 
 package org.seaborne.bnf.parser;
 
-public class Identifier extends Expression {
+import java.util.List;
 
-    private final String identifier;
+public class Alternatives extends Expression {
+    public final List<Expression> alternatives;
 
-    public Identifier(String identifier) {
-        this.identifier = identifier;
+    public static Expression create(List<Expression> exprs) {
+        if ( exprs.size() == 1 )
+            return exprs.getFirst();
+        return new Alternatives(exprs);
     }
 
+    private Alternatives(List<Expression> exprs) {
+        alternatives = List.copyOf(exprs);
+    }
+
+    // Not top level alternative (which does not need parentheses).
     @Override
     public boolean printAtomic(PrintFrame pFrame) {
-        return true;
-    }
-
-    public String getString() {
-        return identifier;
+        return false;
     }
 
     @Override
     public void printStructure(PrintFrame pFrame) {
-        pFrame.out().printf("(id %s)", identifier);
+        PrintFrame.printListExpressions(pFrame, "Alt", alternatives);
     }
 
     @Override
     public void printBNF(PrintFrame pFrame) {
-        pFrame.out().print(identifier);
+        PrintFrame.printList(pFrame, " | ", alternatives);
     }
 }

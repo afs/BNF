@@ -18,30 +18,11 @@
 
 package org.seaborne.bnf.parser;
 
-public class Identifier extends Expression {
+interface ASTNode {
+    // Policy - leave cursor at end of line.
+    public void printStructure(PrintFrame pFrame);
+    public void printBNF(PrintFrame pFrame);
 
-    private final String identifier;
-
-    public Identifier(String identifier) {
-        this.identifier = identifier;
-    }
-
-    @Override
-    public boolean printAtomic(PrintFrame pFrame) {
-        return true;
-    }
-
-    public String getString() {
-        return identifier;
-    }
-
-    @Override
-    public void printStructure(PrintFrame pFrame) {
-        pFrame.out().printf("(id %s)", identifier);
-    }
-
-    @Override
-    public void printBNF(PrintFrame pFrame) {
-        pFrame.out().print(identifier);
-    }
+    // Does this node need brackets?
+    public boolean printAtomic(PrintFrame pFrame);
 }

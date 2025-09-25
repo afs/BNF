@@ -18,12 +18,12 @@
 
 package org.seaborne.bnf.parser;
 
-public class Identifier extends Expression {
+public class HexCharacter extends Expression {
 
-    private final String identifier;
+    private final String character;
 
-    public Identifier(String identifier) {
-        this.identifier = identifier;
+    public HexCharacter(String character) {
+        this.character = character;
     }
 
     @Override
@@ -31,17 +31,14 @@ public class Identifier extends Expression {
         return true;
     }
 
-    public String getString() {
-        return identifier;
-    }
-
     @Override
     public void printStructure(PrintFrame pFrame) {
-        pFrame.out().printf("(id %s)", identifier);
+        pFrame.out().print(character);
     }
 
     @Override
     public void printBNF(PrintFrame pFrame) {
-        pFrame.out().print(identifier);
+        pFrame.out().print(character);
     }
+
 }

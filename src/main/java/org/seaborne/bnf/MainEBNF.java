@@ -21,22 +21,69 @@ package org.seaborne.bnf;
 import java.io.StringReader;
 
 import org.seaborne.bnf.parser.javacc.EBNFParser;
+import org.seaborne.bnf.parser.javacc.ParseException;
 
 public class MainEBNF {
 
-    // [ ] Parse
-    // [ ] Print nested
-    // [ ] Print EBNF
-    // [ ] Rule numbers.
-    // [ ] Validate e.g. rule body names other rules not undef.
+    // [x]  Print EBNF
+    //     Parentheses as input.
+    // [ ] Calculate parenteses
+
+    // More on ranges.
+    //   Negative ranges [^...]
+
+
+    // [ ] Validation
+    //    e.g. rule body names other rules not undef.
+
+    // Range chars.
+    // * Replace WORD with one character token Word() -- but need to do WS control?
+    // * Lexical States
+
+    // Multiline:
+    // * Allow "\" as continuation marker end of line, then optional labels.
+    // * Allow "/" as beginning of line continuation, then optional labels.
+    // * Label required -> allow multiple line rules. But non-standard
 
     public static void main(String... args) throws Exception {
-        //EBNFParser parser = new EBNFParser(System.in);
-        String x = "A ::= \"B\" ; B ::= A A2 .";
-        EBNFParser parser = new EBNFParser(new StringReader(x));
-        parser.Unit();
-        System.out.println("Parse succeeded.");
-        //ast.prettyPrint("");
+//        one("""
+//                [1] A ::= B
+//                """);
+//        // All structure features
+
+        one("""
+                // Comment
+            [1] A ::= B
+            [2] A ::= Z  ?
+
+                        A ::= A2* | (A3 | A4)? | A5 A6 | A7
+            C ::= #x0D*
+            D ::=  [ #x11 - #x22 ] [^ 0-9]    //END
+            A_B_C55 ::= X1 X2 | X3 "QS 1"
+            A ::= ( A2 A3 ) | A5 A6 | A7
+            """);
     }
 
+    private static void one(String text) {
+        System.out.println("==== Input");
+        System.out.println("         1         2         3         4");
+        System.out.println("1234567890123456789012345678901234567890");
+        System.out.println(text);
+        EBNFParser parser = new EBNFParser(new StringReader(text));
+        Grammar grammar;
+        try {
+            parser.Unit();
+            System.out.println("Parse succeeded.");
+            System.out.println();
+            grammar = parser.getGrammar();
+        } catch (ParseException e) {
+            System.out.println(e.getMessage());
+            return;
+            //e.printStackTrace();
+        }
+        Rules.printStructure(grammar);
+        System.out.println("<><><><>");
+        Rules.printEBNF(grammar);
+        System.out.println();
+    }
 }

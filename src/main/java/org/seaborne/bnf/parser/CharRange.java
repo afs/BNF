@@ -18,12 +18,16 @@
 
 package org.seaborne.bnf.parser;
 
-public class Identifier extends Expression {
+public class CharRange  extends Expression {
 
-    private final String identifier;
+    private final String str1;
+    private final String str2;
+    private final boolean isNegative;
 
-    public Identifier(String identifier) {
-        this.identifier = identifier;
+    public CharRange(String str1, String str2, boolean isNegative) {
+        this.str1 = str1;
+        this.str2 = str2;
+        this.isNegative = isNegative;
     }
 
     @Override
@@ -31,17 +35,19 @@ public class Identifier extends Expression {
         return true;
     }
 
-    public String getString() {
-        return identifier;
-    }
-
     @Override
     public void printStructure(PrintFrame pFrame) {
-        pFrame.out().printf("(id %s)", identifier);
+        if ( isNegative )
+            System.out.printf("[^%s-%s]", str1, str2);
+        else
+            System.out.printf("[^%s-%s]", str1, str2);
     }
 
     @Override
     public void printBNF(PrintFrame pFrame) {
-        pFrame.out().print(identifier);
+        if ( isNegative )
+            System.out.printf("[^%s-%s]", str1, str2);
+        else
+            System.out.printf("[^%s-%s]", str1, str2);
     }
 }

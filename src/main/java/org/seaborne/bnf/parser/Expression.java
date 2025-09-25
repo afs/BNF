@@ -18,6 +18,6 @@
 
 package org.seaborne.bnf.parser;
 
-public class Expression {
+public abstract class Expression implements ASTNode {
 
 }
