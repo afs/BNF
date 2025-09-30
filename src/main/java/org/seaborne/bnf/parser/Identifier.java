@@ -18,11 +18,14 @@
 
 package org.seaborne.bnf.parser;
 
+import java.util.Objects;
+
 public class Identifier extends Expression {
 
     private final String identifier;
 
     public Identifier(String identifier) {
+        Objects.requireNonNull(identifier);
         this.identifier = identifier;
     }
 

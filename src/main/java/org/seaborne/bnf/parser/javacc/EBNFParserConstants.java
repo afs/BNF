@@ -25,55 +25,57 @@ public interface EBNFParserConstants {
   /** RegularExpression Id. */
   int PLUS = 7;
   /** RegularExpression Id. */
-  int QUERY = 8;
+  int COMMA = 8;
   /** RegularExpression Id. */
-  int LPAREN = 9;
+  int QUERY = 9;
   /** RegularExpression Id. */
-  int RPAREN = 10;
+  int LPAREN = 10;
   /** RegularExpression Id. */
-  int LBRACK = 11;
+  int RPAREN = 11;
   /** RegularExpression Id. */
-  int RBRACK = 12;
+  int LBRACK = 12;
   /** RegularExpression Id. */
-  int LBRACE = 13;
+  int RBRACK = 13;
   /** RegularExpression Id. */
-  int RBRACE = 14;
+  int LBRACE = 14;
   /** RegularExpression Id. */
-  int SEMI = 15;
+  int RBRACE = 15;
   /** RegularExpression Id. */
-  int DOT = 16;
+  int SEMI = 16;
   /** RegularExpression Id. */
-  int CARAT = 17;
+  int DOT = 17;
   /** RegularExpression Id. */
-  int NONTERMINAL = 18;
+  int CARAT = 18;
   /** RegularExpression Id. */
-  int ECHAR = 19;
+  int NONTERMINAL = 19;
   /** RegularExpression Id. */
-  int HEX = 20;
+  int ECHAR = 20;
   /** RegularExpression Id. */
-  int UCHAR = 21;
+  int HEX = 21;
   /** RegularExpression Id. */
-  int UCHAR4 = 22;
+  int UCHAR = 22;
   /** RegularExpression Id. */
-  int UCHAR8 = 23;
+  int UCHAR4 = 23;
   /** RegularExpression Id. */
-  int QUOTED_STRING = 24;
+  int UCHAR8 = 24;
   /** RegularExpression Id. */
-  int QSTRING1 = 25;
+  int QUOTED_STRING = 25;
   /** RegularExpression Id. */
-  int QSTRING2 = 26;
+  int QSTRING1 = 26;
   /** RegularExpression Id. */
-  int AZ = 27;
+  int QSTRING2 = 27;
   /** RegularExpression Id. */
-  int DIGITS = 28;
+  int AZ = 28;
   /** RegularExpression Id. */
-  int INTEGER = 29;
+  int DIGITS = 29;
   /** RegularExpression Id. */
-  int AZN = 30;
+  int INTEGER = 30;
   /** RegularExpression Id. */
-  int HEX_CHAR = 31;
+  int AZN = 31;
   /** RegularExpression Id. */
-  int WORD = 32;
+  int HEX_CHAR = 32;
+  /** RegularExpression Id. */
+  int WORD = 33;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -88,6 +90,7 @@ public interface EBNFParserConstants {
     "\"|\"",
     "\"*\"",
     "\"+\"",
+    "\",\"",
     "\"?\"",
     "\"(\"",
     "\")\"",

@@ -32,6 +32,9 @@ public class MainEBNF {
     // More on ranges.
     //   Negative ranges [^...]
 
+    // Plain ranges
+    // {N,N}
+
 
     // [ ] Validation
     //    e.g. rule body names other rules not undef.
@@ -46,9 +49,16 @@ public class MainEBNF {
     // * Label required -> allow multiple line rules. But non-standard
 
     public static void main(String... args) throws Exception {
-//        one("""
-//                [1] A ::= B
-//                """);
+        one("""
+                [1] A ::= B{2,3}
+                [2] A ::= B{*}
+                [2] A ::= B{2}
+                [3] A ::= B{2,}
+                [4] A ::= B{2,*}
+                [5] A ::= B{,4}
+                [6] A ::= B{,*}
+
+                """);
 //        // All structure features
 
         one("""
@@ -61,7 +71,16 @@ public class MainEBNF {
             D ::=  [ #x11 - #x22 ] [^ 0-9]    //END
             A_B_C55 ::= X1 X2 | X3 "QS 1"
             A ::= ( A2 A3 ) | A5 A6 | A7
-            """);
+                A1 ::= B{2,3}
+                A2 ::= Z B{*} | Y
+                A3 ::= (B{2})*
+                A4::= B{2,}
+                A5::= B{2,*}
+                A6::= B{,4}
+                A7 ::= B{,*}
+                A8 ::= B{*,*}
+
+//            """);
     }
 
     private static void one(String text) {

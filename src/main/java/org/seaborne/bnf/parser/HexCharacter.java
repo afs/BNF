@@ -18,11 +18,14 @@
 
 package org.seaborne.bnf.parser;
 
+import java.util.Objects;
+
 public class HexCharacter extends Expression {
 
     private final String character;
 
     public HexCharacter(String character) {
+        Objects.requireNonNull(character);
         this.character = character;
     }
 

@@ -20,18 +20,20 @@ package org.seaborne.bnf.parser;
 
 import java.util.Objects;
 
-public class CharRange  extends Expression {
+public class ExprRepeatN extends Expression {
 
-    private final String str1;
-    private final String str2;
-    private final boolean isNegative;
+    public static Expression create(Expression expr, String num) {
+        return new ExprRepeatN(expr, num);
+    }
 
-    public CharRange(String str1, String str2, boolean isNegative) {
-        Objects.requireNonNull(str1);
-        Objects.requireNonNull(str2);
-        this.str1 = str1;
-        this.str2 = str2;
-        this.isNegative = isNegative;
+    private final Expression expr;
+    private final String num;
+
+    ExprRepeatN(Expression expr, String num) {
+        Objects.requireNonNull(expr);
+        Objects.requireNonNull(num);
+        this.expr = expr;
+        this.num = num;
     }
 
     @Override
@@ -41,17 +43,13 @@ public class CharRange  extends Expression {
 
     @Override
     public void printStructure(PrintFrame pFrame) {
-        if ( isNegative )
-            System.out.printf("[^%s-%s]", str1, str2);
-        else
-            System.out.printf("[^%s-%s]", str1, str2);
+        String symbol = String.format("{%s}", num);
+        PrintFrame.printModifierFunction(pFrame, expr, symbol);
     }
 
     @Override
     public void printBNF(PrintFrame pFrame) {
-        if ( isNegative )
-            System.out.printf("[^%s-%s]", str1, str2);
-        else
-            System.out.printf("[^%s-%s]", str1, str2);
+        String symbol = String.format("{%s}", num);
+        PrintFrame.printModifierEBNF(pFrame, expr, symbol);
     }
 }

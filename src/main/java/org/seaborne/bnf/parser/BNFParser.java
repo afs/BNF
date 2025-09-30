@@ -120,6 +120,14 @@ public class BNFParser {
         return string;
     }
 
+    protected Expression createExprRepeat(Expression expr, String str1, String str2) {
+        if ( str2 == null )
+            return new ExprRepeatN(expr, str1);
+        else
+            return new ExprRepeatNM(expr, str1, str2);
+    }
+
+
 //    protected Expression createPositiveCharRange(String string1, String string2) {
 //        return new CharRange(string1, string2);
 //    }

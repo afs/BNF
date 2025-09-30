@@ -18,12 +18,15 @@
 
 package org.seaborne.bnf.parser;
 
+import java.util.Objects;
+
 public class QuotedString extends Expression {
 
     private final String string;
 
-    public QuotedString(String identifier) {
-        this.string = identifier;
+    public QuotedString(String string) {
+        Objects.requireNonNull(string);
+        this.string = string;
     }
 
     @Override

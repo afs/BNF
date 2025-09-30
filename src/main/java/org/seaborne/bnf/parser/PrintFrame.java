@@ -38,9 +38,9 @@ public record PrintFrame(PrintStream out, String labelFmt, String indent, int nu
     }
 
     // Modifier, non-standard form
-    static void printModifierFunction(PrintFrame pFrame, Expression expr, String symbol) {
+    static void printModifierFunction(PrintFrame pFrame, Expression expr, String modifier) {
         pFrame.out().print("(");
-        pFrame.out().print(symbol);
+        pFrame.out().print(modifier);
         pFrame.out().print(" ");
         expr.printStructure(pFrame);
         pFrame.out().print(")");
@@ -59,9 +59,9 @@ public record PrintFrame(PrintStream out, String labelFmt, String indent, int nu
         }
     }
 
-    static void printModifierEBNF(PrintFrame pFrame, Expression expr, String symbol) {
+    static void printModifierEBNF(PrintFrame pFrame, Expression expr, String modifier) {
         printUnary(pFrame, expr);
-        pFrame.out().print(symbol);
+        pFrame.out().print(modifier);
     }
 
     private static void printUnary(PrintFrame pFrame, Expression expr) {

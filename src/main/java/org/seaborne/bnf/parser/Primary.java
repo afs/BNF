@@ -18,6 +18,8 @@
 
 package org.seaborne.bnf.parser;
 
+import java.util.Objects;
+
 /**
  * Input grammar had "( ... )" which we preserve.
  */
@@ -26,6 +28,7 @@ public class Primary extends Expression {
     private final Expression expr;
 
     public Primary(Expression expr) {
+        Objects.requireNonNull(expr);
         this.expr = expr;
     }
 

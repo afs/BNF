@@ -43,6 +43,7 @@ TOKEN : {
 |  < OR:      "|" >
 |  < STAR:    "*" >
 |  < PLUS:    "+" >
+|  < COMMA:   "," >
 |  < QUERY:   "?" >
 |  < LPAREN:  "(" >
 |  < RPAREN:  ")" >
@@ -177,12 +178,39 @@ Expression Unary() : { Expression expr; Token mod = null; }
 {
     expr = Primary()
       ( 
-        ( mod = <QUERY> { expr = createExprZeroOrOne(expr); }
-        | mod = <STAR>  { expr = createExprZeroOrMore(expr); }
-        | mod = <PLUS>  { expr = createExprOneOrMore(expr); }
+        ( <QUERY> { expr = createExprZeroOrOne(expr); }
+        | <STAR>  { expr = createExprZeroOrMore(expr); }
+        | <PLUS>  { expr = createExprOneOrMore(expr); }
+        | expr = Repeat(expr)
         )
       )?
     { return expr; }
+}
+
+Expression Repeat(Expression expr) : {String str1 = null; String str2 = null; }
+{
+    <LBRACE>
+       ( str1 = RepeatCount()
+         ( <COMMA>
+           { str2 = ""; }
+           ( str2 = RepeatCount() )?
+         )?
+       |
+          <COMMA>
+          { str1 = ""; }
+          str2 = RepeatCount()
+       )
+    <RBRACE>
+    { return createExprRepeat(expr, str1, str2); }
+}
+
+String RepeatCount() : { Token t; String str;}
+{
+    (
+       t = <STAR> { return t.image; }
+    |
+       str = Integer() { return str; }
+    )
 }
 
 Expression Primary() : { String str; Token t; Expression expr; }

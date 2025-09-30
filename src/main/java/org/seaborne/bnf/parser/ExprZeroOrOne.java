@@ -18,6 +18,8 @@
 
 package org.seaborne.bnf.parser;
 
+import java.util.Objects;
+
 public class ExprZeroOrOne extends Expression {
 
     public static Expression create(Expression expr) {
@@ -27,6 +29,7 @@ public class ExprZeroOrOne extends Expression {
     private final Expression expr;
 
     ExprZeroOrOne(Expression expr) {
+        Objects.requireNonNull(expr);
         this.expr = expr;
     }
 
