@@ -41,8 +41,8 @@ public class Primary extends Expression {
     @Override
     public void printStructure(PrintFrame pFrame) {
         pFrame.out().print("(primary ");
-        expr.printBNF(pFrame);
-        pFrame.out().print(" )");
+        expr.printStructure(pFrame);
+        pFrame.out().print(")");
     }
 
     @Override

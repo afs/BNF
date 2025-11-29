@@ -25,10 +25,14 @@ SKIP : { <LINE_COMMENT: "//" (~["\n","\r"])* > }
 // Conflicts with hex character
 //SKIP : { <HASH_COMMENT: "#" (~["\n","\r"])* > }
 
+//SKIP :  { " " | "\t" | "\r" | "\n" }
+
+
+// SKIP : { <WS: " " | "\t" | "\r" | "\n" > }
+
 // Horizontal whitespace
 SKIP : {  <WSP: (" " | "\t")> }
 
-// Skip
 
 TOKEN : {
   < EOL: ("\r")? "\n" >   // Not Mac OS 9, which was 2001.
@@ -49,7 +53,6 @@ TOKEN : {
 |  < RBRACE:  "}" >
 |  < SEMI:    ";" >
 |  < DOT:     "." >
-//|  < RSLASH:  "\\" >
 // 0x5E ASCII and Common name: Unicode: Circumflex Accent
 |  < CARAT:   "^" >    
 
@@ -105,7 +108,6 @@ Rule Rule() : { Identifier identifier ; Expression expr; Rule rule; String label
     (label = Label())?
     identifier = Identifier()
     <ASSIGN>
-    (<EOL>)?
     expr = Expression()
     (EOL()|<EOF>)
     { rule = createRule(label, identifier, expr);
@@ -113,7 +115,6 @@ Rule Rule() : { Identifier identifier ; Expression expr; Rule rule; String label
     { return rule; }
 }
 
-// Bad name if used for EOL.
 void BlankLines() : {} {
    (EOL())*
 }
@@ -142,6 +143,7 @@ Expression Expression() : { Expression expr;}
 {
      { startExpression() ; } 
      expr = Alternatives()
+
      { finishExpression() ; }
      { return expr; }
 }
@@ -151,10 +153,6 @@ Expression Alternatives() : { Expression expr ; }
     { startAlternatives() ; } 
     expr = Sequence() { emitAlternativesElement(expr); }
     (
-       // Possible newline continuation
-       // Exactly one newline, no blank lines.
-       LOOKAHEAD(2)
-       (<EOL>)?
        <OR>
        expr = Sequence() { emitAlternativesElement(expr); }
     )*
