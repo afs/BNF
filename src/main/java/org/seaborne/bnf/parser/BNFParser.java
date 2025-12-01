@@ -109,9 +109,15 @@ public class BNFParser {
         return new HexCharacter(string);
     }
 
-    protected Expression createCharacterRange(String string1, String string2, boolean isNegative) {
-        return new CharRange(string1, string2, isNegative);
+    protected Expression createCharacterRange(String string) {
+        // Image includes the "[...]".
+        String x = string.substring(1, string.length()-1);
+        return new CharRange(x);
     }
+
+//    protected Expression createCharacterRange(String string1, String string2, boolean isNegative) {
+//        return new CharRange(string1, string2, isNegative);
+//    }
 
     // Replace by lexical state.
     protected String wordToRangeChar(String string, int line, int column) throws ParseException {

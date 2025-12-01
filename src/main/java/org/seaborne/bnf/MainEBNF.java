@@ -18,6 +18,8 @@
 
 package org.seaborne.bnf;
 
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.io.StringReader;
 
 import org.seaborne.bnf.parser.javacc.EBNFParser;
@@ -25,68 +27,140 @@ import org.seaborne.bnf.parser.javacc.ParseException;
 
 public class MainEBNF {
 
+    // [x] C-block comments.
+    // [ ] Printing Quoted strings.
+    // [ ] Micro-parse character ranges.
+    // [ ] infix -
+    // [ ] @terminals
+
+    // [?] Switch to No SKIP - add WS() as needed.
+
+    // [ ] A - B    with no precedence rules.
+    // [ ] Parsing terminals
+    // [x] /* Comments used in W3C. */
+    // More range [ ] possibilities - any char list, inc \]
+    //    [a-zA-Z], [#xN-#xN]
+    //    [abc], [#xN#xN#xN]
+    //    [^a-z], [^#xN-#xN]
+    //    [^abc], [^#xN#xN#xN]
+    //    and mixed ranges and enumerations
+    //    [^#x00-#x20<>"{}|^`\]
+    // [ ] Extension @terminals
+
+    // Possibilities:
+    // Terminal ";"
+
+    /*
+    #xN
+    [a-zA-Z], [#xN-#xN]
+    [abc], [#xN#xN#xN]
+    [^a-z], [^#xN-#xN]
+    [^abc], [^#xN#xN#xN]
+    */
+    // RE: <LBRACK>('^')?([^]]|"\]")*<RBRACK>
+
     // [x]  Print EBNF
-    //     Parentheses as input.
-    // [ ] Calculate parentheses
-
-    // More on ranges.
-    //   Negative ranges [^...]
-
-    // Plain ranges
-    // {N,N}
 
     // [ ] Validation
-    //    e.g. rule body names other rules not undef.
+    // All productions used (body) as defined (head)
 
-    // Range chars.
-    // * Replace WORD with one character token Word() -- but need to do WS control?
-    // * Lexical States
+    // Extensions and interpretations
+    // + Production labels: "[ ]"
+    // + Multiline
+    // + Blanklines
 
-    // Multiline:
-
+    // == Multiline:
     // Standard EBNF (ISO/IEC 14977) uses a semicolon (;) terminator
     // W3C ebnf::
-    // ** Only in alternatives: for lines starting |
-    //   i.e. allow (EOL)? `|`
+    //   ** Only in alternatives: for lines starting |
+    //     i.e. allow (EOL)? `|`
+    //     i.e. allow (EOL)? around ::=
 
-    // https://www.bottlecaps.de/rex/
-    // newline after ::=
+    // From https://www.bottlecaps.de/rex/
+    //     newline after ::=
 
-
-    // 1. Go for "\" WS EOL == "\" is a pseudo element
-    // 2. Only in alternatives: for lines starting |
-    // 3. Allow "\" as continuation marker end of line
-
+    // ??
     // * Allow "\" as continuation marker end of line, then optional labels.
 
-
-    // Sequence is actually a stack of Unary()
-    // | ends the sequence
-    // 2 Unary  U2 U1 "::=" is end last rule at U2 add uses U1 as production names.
-    //    Tricky for modifiers "a*"
-    //  == Word() lookahead.
-
-
-    // LOOKAHEAD(4) Word-optLabel-word ::=
-    // LOOKAHEAD(Peek rule) -- "syntactic lookahead"
-    // LOOKAHEAD( { getToken(1).kind == C && getToken(2).kind != C } ) -- Semantic lookahead
-
-
     public static void main(String... args) throws Exception {
+        // [^ char ranges
+        //String fn1 = "/home/afs/W3C/rdf-star-wg/rdf-turtle/spec/turtle.bnf";
+
+        String fn1 = "Examples/rdf-turtle.bnf";
+        String fn2 = "Examples/sparql-query.bnf";
+
+
+        String fnx1 = "Examples/turtle.ebnf";
+        String fnx2 = "Examples/SPARQL.ebnf";
+        String fnx3 = "Examples/Java.ebnf";
         // All structure features
+        // No escapes inside []- use #5D for ]
+
+        // Missing : general - (like alt)
         String str = """
-                LONGNAME ::=
-                    B1 B2
-                    | A3
-                    | D | C E
-                [2] X ::= X1 | X2
+IRIREF                    ::= '<' ([^<>"{}|^`\\]-[#x00-#x20])* '>'
+               """;
+
+        one(str);
+        System.exit(0);
+
+
+        String strCR = """
+//Range1 ::=    #xN
+Range1 ::=    [a-zA-Z]
+Range1 ::=    [#xN-#xN]
+Range1 ::=    [abc]
+Range1 ::=    [#xN#xN#xN]
+Range1 ::=    [^a-z]
+Range1 ::=    [^#xN-#xN]
+Range1 ::=    [^abc]
+Range1 ::=    [^#xN#xN#xN]
+                D ::=  [#x11-#x22][^0-9]
+                Z ::= [^ 0 - 9  ]
+                Z ::= [^\\]ABC]
+                Z ::= [^\\\\Z]
                 """;
 
+//        parse(str);
+//        System.exit(0);
+
+
 //        one(cardinalityStr);
-        one(str);
 //        one(str);
 
+        parseFile(fn1);
+        parseFile(fn2);
+
+
+//        Grammar grammar = parseFile(fn1);
+//        Rules.printStructure(grammar);
+//        System.out.println("<><><><>");
+//        Rules.printEBNF(grammar);
+//        System.out.println();
     }
+
+    public static Grammar parseFile(String filename) throws Exception {
+        System.out.println("File: "+filename);
+        InputStream input = new FileInputStream(filename);
+        EBNFParser parser = new EBNFParser(input);
+        try {
+            parser.Unit();
+            System.out.println("-- Parse succeeded.");
+            System.out.println();
+            return parser.getGrammar();
+        } catch (ParseException e) {
+            System.out.println(e.getMessage());
+            return null;
+            //e.printStackTrace();
+        }
+//        Grammar grammar = parser.getGrammar();
+//        Rules.printStructure(grammar);
+//        System.out.println("<><><><>");
+//        Rules.printEBNF(grammar);
+//        System.out.println();
+
+    }
+
     public static void test() throws Exception {
         String cardinalityStr = """
                 [1] A ::= B{2,3}
@@ -125,13 +199,22 @@ public class MainEBNF {
 //        one(str);
     }
 
-    private static void one(String text) {
-        System.out.println("==== Input");
-        System.out.println("         1         2         3         4");
-        System.out.println("1234567890123456789012345678901234567890");
-        System.out.print(text);
-        if ( ! text.endsWith("\n") )
+    private static void parse(String text) {
+        EBNFParser parser = new EBNFParser(new StringReader(text));
+        try {
+            parser.Unit();
+            System.out.println("-- Parse succeeded.");
             System.out.println();
+        } catch (ParseException e) {
+            printText(text);
+            System.out.println(e.getMessage());
+            return;
+            //e.printStackTrace();
+        }
+    }
+
+    private static void one(String text) {
+        printText(text);
         System.out.println();
         EBNFParser parser = new EBNFParser(new StringReader(text));
         try {
@@ -148,5 +231,15 @@ public class MainEBNF {
         System.out.println("<><><><>");
         Rules.printEBNF(grammar);
         System.out.println();
+    }
+
+
+    static void printText(String text) {
+        System.out.println("==== Input");
+        System.out.println("         1         2         3         4");
+        System.out.println("1234567890123456789012345678901234567890");
+        System.out.print(text);
+        if ( ! text.endsWith("\n") )
+            System.out.println();
     }
 }

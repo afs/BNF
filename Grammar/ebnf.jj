@@ -21,9 +21,22 @@ PARSER_END(EBNFParser)
 
 // SPECIAL_TOKEN:
 
+// Coments with //
 SKIP : { <LINE_COMMENT: "//" (~["\n","\r"])* > }
 // Conflicts with hex character
 //SKIP : { <HASH_COMMENT: "#" (~["\n","\r"])* > }
+
+// --- C-style block command, using lexical states
+
+// Start comment
+SKIP : { "/*": IN_COMMENT }
+// when any other character is seen in the IN_COMMENT state, skip it.
+< IN_COMMENT > SKIP : { < ~[] > }
+// when */ is seen in the IN_COMMENT state, skip it and switch back to the DEFAULT state
+< IN_COMMENT > SKIP : { "*/": DEFAULT }
+
+// --- C-style block command, using lexical states
+
 
 // Horizontal whitespace
 SKIP : {  <WSP: (" " | "\t")> }
@@ -55,18 +68,19 @@ TOKEN : {
 
 |  < NONTERMINAL:    "<" (~[">", "\n", "\r"])* ">" >
 
-|  < ECHAR:          "\\" ( "t"|"b"|"n"|"r"| "\\"|"\""|"'") >
+// |  < ECHAR:          "\\" ( "t"|"b"|"n"|"r"| "\\"|"\""|"'") >
 |  < #HEX:           ["0"-"9"] | ["A"-"F"] | ["a"-"f"] >
 |  < #UCHAR:         <UCHAR4> | <UCHAR8> >
 |  < #UCHAR4:        "\\" "u" <HEX> <HEX> <HEX> <HEX> >
 |  < #UCHAR8:        "\\" "U" <HEX> <HEX> <HEX> <HEX> <HEX> <HEX> <HEX> <HEX> >
 
-// Single character.
-// |  < RANGE_CHAR:     (~["'","\\","\n","\r"]) | <ECHAR> | <UCHAR> >
-
 |  < QUOTED_STRING:  <QSTRING1> | <QSTRING2> >
-|  < QSTRING1:       ( "'" ( (~["'","\\","\n","\r"]) | <ECHAR> | <UCHAR> )* "'" ) >
-|  < QSTRING2:       ( "\"" ( (~["\"","\\","\n","\r"]) | <ECHAR> | <UCHAR> )* "\"" ) >
+// |  < #QSTRING1:       ( "'" ( (~["'","\\","\n","\r"]) | <ECHAR> | <UCHAR> )* "'" ) >
+// |  < #QSTRING2:       ( "\"" ( (~["\"","\\","\n","\r"]) | <ECHAR> | <UCHAR> )* "\"" ) >
+
+// // No escapes, no nelines
+| < #QSTRING1: ( "'"  ( ~["'",  "\n", "\r"])* "'" ) >
+| < #QSTRING2: ( "\"" ( ~["\"", "\n", "\r"])* "\"" ) >
 
 //|  <LABEL: <LBRACK> (~["\n","\r"])* <RBRACK> >
 
@@ -78,6 +92,9 @@ TOKEN : {
 |  < #AZN : ( <AZ> | <DIGITS> ) >
 
 |  < HEX_CHAR: "#x" (<HEX>)+ >
+
+// No escape sequnces inside [ ] :: Use #5D for ]
+|  < CHAR_RANGE: <LBRACK> ("^")? ( ~[ "]", "\n","\r" ])* <RBRACK> >
 
 // Last
 |  < WORD:  <AZ> (("_" | <AZN> )* <AZN> )? >
@@ -104,6 +121,7 @@ Rule Rule() : { Identifier identifier ; Expression expr; Rule rule; String label
     { startRule(); }
     (label = Label())?
     identifier = Identifier()
+    (<EOL>)?
     <ASSIGN>
     (<EOL>)?
     expr = Expression()
@@ -152,7 +170,7 @@ Expression Alternatives() : { Expression expr ; }
     expr = Sequence() { emitAlternativesElement(expr); }
     (
        // Possible newline continuation
-       // Exactly one newline, no blank lines.
+       // One newline, no blank lines.
        LOOKAHEAD(2)
        (<EOL>)?
        <OR>
@@ -223,7 +241,6 @@ Expression Primary() : { String str; Token t; Expression expr; }
       str = Word()      { return createWord(str); }
     |
       t = <QUOTED_STRING> { return createQuotedString(t.image); }
-      // CharacterRange, CharacterNumericRange
     |
       <LPAREN> expr = Expression() <RPAREN> { return createPrimary(expr); }
       // Other {} []
@@ -244,40 +261,51 @@ Expression Character() : { Token t; }
    t = <HEX_CHAR> { return createCharacter(t.image); }
 }
 
-Expression CharacterRange() : { String s1; String s2; boolean isNegative = false; }
+Expression CharacterRange() : { Token t; }
 {
-    <LBRACK>
-    ( <CARAT> { isNegative = true; } )?
-    s1 = RangeElement()
-    "-"
-    s2 = RangeElement()
-    <RBRACK>
-    { return createCharacterRange(s1, s2, isNegative); }
+    // Spaces are significant.
+    // Capture here as the "[....]"
+    // and parse the token in detail.
+
+    t = <CHAR_RANGE>
+    { return createCharacterRange(t.image); }
 }
 
-String RangeElement() : { String str; }
-{
-  ( str = HexChar() { return str; }
-  // later: Parse lexical state to switch to a different set of lexical tokens
-  | str = Word()   { return wordToRangeChar(str, token.beginLine, token.beginColumn); }
-  | str = Integer()  { return wordToRangeChar(str, token.beginLine, token.beginColumn); }
-  )
-}
+// Expression CharacterRange() : { String s1; String s2; boolean isNegative = false; }
+// {
+//     // Spaces are significant.
+//     // Capture here as the "[....]"
+//     // and parse the 
+// 
+//     <LBRACK>
+//     ( <CARAT> { isNegative = true; } )?
+//     s1 = RangeElement()
+//     "-"
+//     s2 = RangeElement()
+//     <RBRACK>
+//     { return createCharacterRange(s1, s2, isNegative); }
+// }
+// 
+// String RangeElement() : { String str; }
+// {
+//   ( str = HexChar() { return str; }
+//   // later: Parse lexical state to switch to a different set of lexical tokens
+//   | str = Word()   { return wordToRangeChar(str, token.beginLine, token.beginColumn); }
+//   | str = Integer()  { return wordToRangeChar(str, token.beginLine, token.beginColumn); }
+//   )
+// }
+//
+// String HexChar() : { Token t; String str; }
+// {
+//     t = <HEX_CHAR>
+//     { return t.image; }
+// }
 
 // Abstract away from the concrete token.
 
 // String WS() : { }
 // {
 // }
-
-
-
-String HexChar() : { Token t; String str; }
-{
-    t = <HEX_CHAR>
-    { return t.image; }
-}
-
 
 String Word() : { Token t; String str; }
 {
@@ -293,7 +321,7 @@ String Integer() : { Token t; String str; }
 
 
 
-
+// TODO
 //   [a-zA-Z], [#xN-#xN]
 //   [abc], [#xN#xN#xN]
 //   [^a-z], [^#xN-#xN]

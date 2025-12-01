@@ -50,7 +50,6 @@ startRule();
       ;
     }
     identifier = Identifier();
-    jj_consume_token(ASSIGN);
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case EOL:{
       jj_consume_token(EOL);
@@ -58,6 +57,16 @@ startRule();
       }
     default:
       jj_la1[2] = jj_gen;
+      ;
+    }
+    jj_consume_token(ASSIGN);
+    switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+    case EOL:{
+      jj_consume_token(EOL);
+      break;
+      }
+    default:
+      jj_la1[3] = jj_gen;
       ;
     }
     expr = Expression();
@@ -71,7 +80,7 @@ startRule();
       break;
       }
     default:
-      jj_la1[3] = jj_gen;
+      jj_la1[4] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -91,7 +100,7 @@ rule = createRule(label, identifier, expr);
         break;
         }
       default:
-        jj_la1[4] = jj_gen;
+        jj_la1[5] = jj_gen;
         break label_2;
       }
       EOL();
@@ -113,14 +122,14 @@ rule = createRule(label, identifier, expr);
         break;
         }
       default:
-        jj_la1[5] = jj_gen;
+        jj_la1[6] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
       break;
       }
     default:
-      jj_la1[6] = jj_gen;
+      jj_la1[7] = jj_gen;
       ;
     }
     jj_consume_token(RBRACK);
@@ -142,7 +151,7 @@ rule = createRule(label, identifier, expr);
       break;
       }
     default:
-      jj_la1[7] = jj_gen;
+      jj_la1[8] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -174,7 +183,7 @@ emitAlternativesElement(expr);
         break;
         }
       default:
-        jj_la1[8] = jj_gen;
+        jj_la1[9] = jj_gen;
         ;
       }
       jj_consume_token(OR);
@@ -196,16 +205,16 @@ startSequence() ;
 emitSequenceElement(expr);
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
       case LPAREN:
-      case LBRACK:
       case NONTERMINAL:
       case QUOTED_STRING:
       case HEX_CHAR:
+      case CHAR_RANGE:
       case WORD:{
         ;
         break;
         }
       default:
-        jj_la1[9] = jj_gen;
+        jj_la1[10] = jj_gen;
         break label_4;
       }
     }
@@ -243,14 +252,14 @@ expr = createExprOneOrMore(expr);
         break;
         }
       default:
-        jj_la1[10] = jj_gen;
+        jj_la1[11] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
       break;
       }
     default:
-      jj_la1[11] = jj_gen;
+      jj_la1[12] = jj_gen;
       ;
     }
 {if ("" != null) return expr;}
@@ -274,13 +283,13 @@ str2 = "";
           break;
           }
         default:
-          jj_la1[12] = jj_gen;
+          jj_la1[13] = jj_gen;
           ;
         }
         break;
         }
       default:
-        jj_la1[13] = jj_gen;
+        jj_la1[14] = jj_gen;
         ;
       }
       break;
@@ -292,7 +301,7 @@ str1 = "";
       break;
       }
     default:
-      jj_la1[14] = jj_gen;
+      jj_la1[15] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -314,7 +323,7 @@ str1 = "";
       break;
       }
     default:
-      jj_la1[15] = jj_gen;
+      jj_la1[16] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -350,13 +359,13 @@ str1 = "";
 {if ("" != null) return expr;}
       break;
       }
-    case LBRACK:{
+    case CHAR_RANGE:{
       expr = CharacterRange();
 {if ("" != null) return expr;}
       break;
       }
     default:
-      jj_la1[16] = jj_gen;
+      jj_la1[17] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -369,50 +378,45 @@ str1 = "";
     throw new Error("Missing return statement in function");
 }
 
-  final public Expression CharacterRange() throws ParseException {String s1; String s2; boolean isNegative = false;
-    jj_consume_token(LBRACK);
-    switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
-    case CARAT:{
-      jj_consume_token(CARAT);
-isNegative = true;
-      break;
-      }
-    default:
-      jj_la1[17] = jj_gen;
-      ;
-    }
-    s1 = RangeElement();
-    jj_consume_token(34);
-    s2 = RangeElement();
-    jj_consume_token(RBRACK);
-{if ("" != null) return createCharacterRange(s1, s2, isNegative);}
+  final public Expression CharacterRange() throws ParseException {Token t;
+    // Spaces are significant.
+        // Capture here as the "[....]"
+        // and parse the token in detail.
+    
+        t = jj_consume_token(CHAR_RANGE);
+{if ("" != null) return createCharacterRange(t.image);}
     throw new Error("Missing return statement in function");
 }
 
-  final public String RangeElement() throws ParseException {String str;
-    switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
-    case HEX_CHAR:{
-      str = HexChar();
-{if ("" != null) return str;}
-      break;
-      }
-    case WORD:{
-      str = Word();
-{if ("" != null) return wordToRangeChar(str, token.beginLine, token.beginColumn);}
-      break;
-      }
-    case INTEGER:{
-      str = Integer();
-{if ("" != null) return wordToRangeChar(str, token.beginLine, token.beginColumn);}
-      break;
-      }
-    default:
-      jj_la1[18] = jj_gen;
-      jj_consume_token(-1);
-      throw new ParseException();
-    }
-    throw new Error("Missing return statement in function");
-}
+// Expression CharacterRange() : { String s1; String s2; boolean isNegative = false; }
+// {
+//     // Spaces are significant.
+//     // Capture here as the "[....]"
+//     // and parse the 
+// 
+//     <LBRACK>
+//     ( <CARAT> { isNegative = true; } )?
+//     s1 = RangeElement()
+//     "-"
+//     s2 = RangeElement()
+//     <RBRACK>
+//     { return createCharacterRange(s1, s2, isNegative); }
+// }
+// 
+// String RangeElement() : { String str; }
+// {
+//   ( str = HexChar() { return str; }
+//   // later: Parse lexical state to switch to a different set of lexical tokens
+//   | str = Word()   { return wordToRangeChar(str, token.beginLine, token.beginColumn); }
+//   | str = Integer()  { return wordToRangeChar(str, token.beginLine, token.beginColumn); }
+//   )
+// }
+//
+// String HexChar() : { Token t; String str; }
+// {
+//     t = <HEX_CHAR>
+//     { return t.image; }
+// }
 
 // Abstract away from the concrete token.
 
@@ -420,15 +424,7 @@ isNegative = true;
 // {
 // }
   final public 
-
-
-String HexChar() throws ParseException {Token t; String str;
-    t = jj_consume_token(HEX_CHAR);
-{if ("" != null) return t.image;}
-    throw new Error("Missing return statement in function");
-}
-
-  final public String Word() throws ParseException {Token t; String str;
+String Word() throws ParseException {Token t; String str;
     t = jj_consume_token(WORD);
 {if ("" != null) return t.image;}
     throw new Error("Missing return statement in function");
@@ -448,77 +444,13 @@ String HexChar() throws ParseException {Token t; String str;
     finally { jj_save(0, xla); }
   }
 
-  private boolean jj_3R_Primary_221_7_9()
+  private boolean jj_3R_CharacterRange_270_5_17()
  {
-    if (jj_scan_token(NONTERMINAL)) return true;
+    if (jj_scan_token(CHAR_RANGE)) return true;
     return false;
   }
 
-  private boolean jj_3R_Character_244_4_16()
- {
-    if (jj_scan_token(HEX_CHAR)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_Primary_220_5_8()
- {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_Primary_221_7_9()) {
-    jj_scanpos = xsp;
-    if (jj_3R_Primary_223_7_10()) {
-    jj_scanpos = xsp;
-    if (jj_3R_Primary_225_7_11()) {
-    jj_scanpos = xsp;
-    if (jj_3R_Primary_228_7_12()) {
-    jj_scanpos = xsp;
-    if (jj_3R_Primary_236_7_13()) {
-    jj_scanpos = xsp;
-    if (jj_3R_Primary_238_7_14()) return true;
-    }
-    }
-    }
-    }
-    }
-    return false;
-  }
-
-  private boolean jj_3R_Sequence_171_7_6()
- {
-    if (jj_3R_Unary_181_5_7()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_Primary_238_7_14()
- {
-    if (jj_3R_CharacterRange_249_5_17()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_Word_284_5_15()
- {
-    if (jj_scan_token(WORD)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_Primary_236_7_13()
- {
-    if (jj_3R_Character_244_4_16()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_Sequence_169_5_5()
- {
-    Token xsp;
-    if (jj_3R_Sequence_171_7_6()) return true;
-    while (true) {
-      xsp = jj_scanpos;
-      if (jj_3R_Sequence_171_7_6()) { jj_scanpos = xsp; break; }
-    }
-    return false;
-  }
-
-  private boolean jj_3R_Primary_228_7_12()
+  private boolean jj_3R_Primary_245_7_12()
  {
     if (jj_scan_token(LPAREN)) return true;
     return false;
@@ -528,33 +460,97 @@ String HexChar() throws ParseException {Token t; String str;
  {
     Token xsp;
     xsp = jj_scanpos;
-    if (jj_scan_token(3)) jj_scanpos = xsp;
+    if (jj_scan_token(6)) jj_scanpos = xsp;
     if (jj_scan_token(OR)) return true;
-    if (jj_3R_Sequence_169_5_5()) return true;
+    if (jj_3R_Sequence_187_5_5()) return true;
     return false;
   }
 
-  private boolean jj_3R_Primary_225_7_11()
+  private boolean jj_3R_Unary_199_5_7()
+ {
+    if (jj_3R_Primary_238_5_8()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_Primary_243_7_11()
  {
     if (jj_scan_token(QUOTED_STRING)) return true;
     return false;
   }
 
-  private boolean jj_3R_Unary_181_5_7()
+  private boolean jj_3R_Word_312_5_15()
  {
-    if (jj_3R_Primary_220_5_8()) return true;
+    if (jj_scan_token(WORD)) return true;
     return false;
   }
 
-  private boolean jj_3R_CharacterRange_249_5_17()
+  private boolean jj_3R_Primary_241_7_10()
  {
-    if (jj_scan_token(LBRACK)) return true;
+    if (jj_3R_Word_312_5_15()) return true;
     return false;
   }
 
-  private boolean jj_3R_Primary_223_7_10()
+  private boolean jj_3R_Primary_239_7_9()
  {
-    if (jj_3R_Word_284_5_15()) return true;
+    if (jj_scan_token(NONTERMINAL)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_Primary_238_5_8()
+ {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_Primary_239_7_9()) {
+    jj_scanpos = xsp;
+    if (jj_3R_Primary_241_7_10()) {
+    jj_scanpos = xsp;
+    if (jj_3R_Primary_243_7_11()) {
+    jj_scanpos = xsp;
+    if (jj_3R_Primary_245_7_12()) {
+    jj_scanpos = xsp;
+    if (jj_3R_Primary_253_7_13()) {
+    jj_scanpos = xsp;
+    if (jj_3R_Primary_255_7_14()) return true;
+    }
+    }
+    }
+    }
+    }
+    return false;
+  }
+
+  private boolean jj_3R_Character_261_4_16()
+ {
+    if (jj_scan_token(HEX_CHAR)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_Sequence_189_7_6()
+ {
+    if (jj_3R_Unary_199_5_7()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_Primary_255_7_14()
+ {
+    if (jj_3R_CharacterRange_270_5_17()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_Sequence_187_5_5()
+ {
+    Token xsp;
+    if (jj_3R_Sequence_189_7_6()) return true;
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3R_Sequence_189_7_6()) { jj_scanpos = xsp; break; }
+    }
+    return false;
+  }
+
+  private boolean jj_3R_Primary_253_7_13()
+ {
+    if (jj_3R_Character_261_4_16()) return true;
     return false;
   }
 
@@ -569,7 +565,7 @@ String HexChar() throws ParseException {Token t; String str;
   private Token jj_scanpos, jj_lastpos;
   private int jj_la;
   private int jj_gen;
-  final private int[] jj_la1 = new int[19];
+  final private int[] jj_la1 = new int[18];
   static private int[] jj_la1_0;
   static private int[] jj_la1_1;
   static {
@@ -577,10 +573,10 @@ String HexChar() throws ParseException {Token t; String str;
 	   jj_la1_init_1();
 	}
 	private static void jj_la1_init_0() {
-	   jj_la1_0 = new int[] {0x81000,0x1000,0x8,0x9,0x8,0x40000000,0x40000000,0x80000,0x8,0x2081400,0x42c0,0x42c0,0x40000040,0x100,0x40000140,0x40000040,0x2081400,0x40000,0x40000000,};
+	   jj_la1_0 = new int[] {0x408000,0x8000,0x40,0x40,0x41,0x40,0x0,0x0,0x400000,0x40,0x8402000,0x21600,0x21600,0x200,0x800,0xa00,0x200,0x8402000,};
 	}
 	private static void jj_la1_init_1() {
-	   jj_la1_1 = new int[] {0x2,0x0,0x0,0x0,0x0,0x2,0x2,0x2,0x0,0x3,0x0,0x0,0x0,0x0,0x0,0x0,0x3,0x0,0x3,};
+	   jj_la1_1 = new int[] {0x10,0x0,0x0,0x0,0x0,0x0,0x11,0x11,0x10,0x0,0x1c,0x0,0x0,0x1,0x0,0x1,0x1,0x1c,};
 	}
   final private JJCalls[] jj_2_rtns = new JJCalls[1];
   private boolean jj_rescan = false;
@@ -597,7 +593,7 @@ String HexChar() throws ParseException {Token t; String str;
 	 token = new Token();
 	 jj_ntk = -1;
 	 jj_gen = 0;
-	 for (int i = 0; i < 19; i++) jj_la1[i] = -1;
+	 for (int i = 0; i < 18; i++) jj_la1[i] = -1;
 	 for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -612,7 +608,7 @@ String HexChar() throws ParseException {Token t; String str;
 	 token = new Token();
 	 jj_ntk = -1;
 	 jj_gen = 0;
-	 for (int i = 0; i < 19; i++) jj_la1[i] = -1;
+	 for (int i = 0; i < 18; i++) jj_la1[i] = -1;
 	 for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -623,7 +619,7 @@ String HexChar() throws ParseException {Token t; String str;
 	 token = new Token();
 	 jj_ntk = -1;
 	 jj_gen = 0;
-	 for (int i = 0; i < 19; i++) jj_la1[i] = -1;
+	 for (int i = 0; i < 18; i++) jj_la1[i] = -1;
 	 for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -642,7 +638,7 @@ String HexChar() throws ParseException {Token t; String str;
 	 token = new Token();
 	 jj_ntk = -1;
 	 jj_gen = 0;
-	 for (int i = 0; i < 19; i++) jj_la1[i] = -1;
+	 for (int i = 0; i < 18; i++) jj_la1[i] = -1;
 	 for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -652,7 +648,7 @@ String HexChar() throws ParseException {Token t; String str;
 	 token = new Token();
 	 jj_ntk = -1;
 	 jj_gen = 0;
-	 for (int i = 0; i < 19; i++) jj_la1[i] = -1;
+	 for (int i = 0; i < 18; i++) jj_la1[i] = -1;
 	 for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -662,7 +658,7 @@ String HexChar() throws ParseException {Token t; String str;
 	 token = new Token();
 	 jj_ntk = -1;
 	 jj_gen = 0;
-	 for (int i = 0; i < 19; i++) jj_la1[i] = -1;
+	 for (int i = 0; i < 18; i++) jj_la1[i] = -1;
 	 for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -793,12 +789,12 @@ String HexChar() throws ParseException {Token t; String str;
   /** Generate ParseException. */
   public ParseException generateParseException() {
 	 jj_expentries.clear();
-	 boolean[] la1tokens = new boolean[35];
+	 boolean[] la1tokens = new boolean[37];
 	 if (jj_kind >= 0) {
 	   la1tokens[jj_kind] = true;
 	   jj_kind = -1;
 	 }
-	 for (int i = 0; i < 19; i++) {
+	 for (int i = 0; i < 18; i++) {
 	   if (jj_la1[i] == jj_gen) {
 		 for (int j = 0; j < 32; j++) {
 		   if ((jj_la1_0[i] & (1<<j)) != 0) {
@@ -810,7 +806,7 @@ String HexChar() throws ParseException {Token t; String str;
 		 }
 	   }
 	 }
-	 for (int i = 0; i < 35; i++) {
+	 for (int i = 0; i < 37; i++) {
 	   if (la1tokens[i]) {
 		 jj_expentry = new int[1];
 		 jj_expentry[0] = i;

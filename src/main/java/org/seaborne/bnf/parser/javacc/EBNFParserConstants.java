@@ -13,77 +13,82 @@ public interface EBNFParserConstants {
   /** RegularExpression Id. */
   int LINE_COMMENT = 1;
   /** RegularExpression Id. */
-  int WSP = 2;
+  int WSP = 5;
   /** RegularExpression Id. */
-  int EOL = 3;
+  int EOL = 6;
   /** RegularExpression Id. */
-  int ASSIGN = 4;
+  int ASSIGN = 7;
   /** RegularExpression Id. */
-  int OR = 5;
+  int OR = 8;
   /** RegularExpression Id. */
-  int STAR = 6;
+  int STAR = 9;
   /** RegularExpression Id. */
-  int PLUS = 7;
+  int PLUS = 10;
   /** RegularExpression Id. */
-  int COMMA = 8;
+  int COMMA = 11;
   /** RegularExpression Id. */
-  int QUERY = 9;
+  int QUERY = 12;
   /** RegularExpression Id. */
-  int LPAREN = 10;
+  int LPAREN = 13;
   /** RegularExpression Id. */
-  int RPAREN = 11;
+  int RPAREN = 14;
   /** RegularExpression Id. */
-  int LBRACK = 12;
+  int LBRACK = 15;
   /** RegularExpression Id. */
-  int RBRACK = 13;
+  int RBRACK = 16;
   /** RegularExpression Id. */
-  int LBRACE = 14;
+  int LBRACE = 17;
   /** RegularExpression Id. */
-  int RBRACE = 15;
+  int RBRACE = 18;
   /** RegularExpression Id. */
-  int SEMI = 16;
+  int SEMI = 19;
   /** RegularExpression Id. */
-  int DOT = 17;
+  int DOT = 20;
   /** RegularExpression Id. */
-  int CARAT = 18;
+  int CARAT = 21;
   /** RegularExpression Id. */
-  int NONTERMINAL = 19;
+  int NONTERMINAL = 22;
   /** RegularExpression Id. */
-  int ECHAR = 20;
+  int HEX = 23;
   /** RegularExpression Id. */
-  int HEX = 21;
+  int UCHAR = 24;
   /** RegularExpression Id. */
-  int UCHAR = 22;
+  int UCHAR4 = 25;
   /** RegularExpression Id. */
-  int UCHAR4 = 23;
+  int UCHAR8 = 26;
   /** RegularExpression Id. */
-  int UCHAR8 = 24;
+  int QUOTED_STRING = 27;
   /** RegularExpression Id. */
-  int QUOTED_STRING = 25;
+  int QSTRING1 = 28;
   /** RegularExpression Id. */
-  int QSTRING1 = 26;
+  int QSTRING2 = 29;
   /** RegularExpression Id. */
-  int QSTRING2 = 27;
+  int AZ = 30;
   /** RegularExpression Id. */
-  int AZ = 28;
+  int DIGITS = 31;
   /** RegularExpression Id. */
-  int DIGITS = 29;
+  int INTEGER = 32;
   /** RegularExpression Id. */
-  int INTEGER = 30;
+  int AZN = 33;
   /** RegularExpression Id. */
-  int AZN = 31;
+  int HEX_CHAR = 34;
   /** RegularExpression Id. */
-  int HEX_CHAR = 32;
+  int CHAR_RANGE = 35;
   /** RegularExpression Id. */
-  int WORD = 33;
+  int WORD = 36;
 
   /** Lexical state. */
   int DEFAULT = 0;
+  /** Lexical state. */
+  int IN_COMMENT = 1;
 
   /** Literal token values. */
   String[] tokenImage = {
     "<EOF>",
     "<LINE_COMMENT>",
+    "\"/*\"",
+    "<token of kind 3>",
+    "\"*/\"",
     "<WSP>",
     "<EOL>",
     "\"::=\"",
@@ -102,7 +107,6 @@ public interface EBNFParserConstants {
     "\".\"",
     "\"^\"",
     "<NONTERMINAL>",
-    "<ECHAR>",
     "<HEX>",
     "<UCHAR>",
     "<UCHAR4>",
@@ -115,8 +119,8 @@ public interface EBNFParserConstants {
     "<INTEGER>",
     "<AZN>",
     "<HEX_CHAR>",
+    "<CHAR_RANGE>",
     "<WORD>",
-    "\"-\"",
   };
 
 }
