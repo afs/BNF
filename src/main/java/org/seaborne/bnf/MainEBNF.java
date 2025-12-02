@@ -83,6 +83,27 @@ public class MainEBNF {
     // * Allow "\" as continuation marker end of line, then optional labels.
 
     public static void main(String... args) throws Exception {
+
+        // Print with invisible primary
+
+        if ( false )
+        {
+            String x1 = """
+                    X ::= A - (B | C )
+                    X ::= (A - B) | C
+                    // Wrong - bind "-" more tightly. Primary? ie. not *
+                    X ::= A - B | C
+                    """;
+            String x = """
+                    X ::= A - B C
+                    X ::= (A - B) C
+                    X ::= A - (B C)
+                    """;
+
+            one(x);
+            System.exit(0);
+        }
+
         // [^ char ranges
         //String fn1 = "/home/afs/W3C/rdf-star-wg/rdf-turtle/spec/turtle.bnf";
 
@@ -98,11 +119,11 @@ public class MainEBNF {
 
         // Missing : general - (like alt)
         String str = """
-IRIREF                    ::= '<' ([^<>"{}|^`\\]-[#x00-#x20])* '>'
+IRIREF ::= '<' ([^<>"{}|^`\\]-[#x00-#x20])* '>'
                """;
 
-        one(str);
-        System.exit(0);
+//        one(str);
+//        System.exit(0);
 
 
         String strCR = """
@@ -227,8 +248,12 @@ Range1 ::=    [^#xN#xN#xN]
             //e.printStackTrace();
         }
         Grammar grammar = parser.getGrammar();
-        Rules.printStructure(grammar);
+
+
+        Rules.printAST(grammar);
         System.out.println("<><><><>");
+//        Rules.printStructure(grammar);
+//        System.out.println("<><><><>");
         Rules.printEBNF(grammar);
         System.out.println();
     }

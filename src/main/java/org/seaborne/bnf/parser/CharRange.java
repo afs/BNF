@@ -36,8 +36,14 @@ public class CharRange extends Expression {
     }
 
     @Override
-    public void printStructure(PrintFrame pFrame) {
+    public void printAST(PrintFrame pFrame) {
         System.out.printf("[%s]", str);
+    }
+
+    @Override
+    public void printStructure(PrintFrame pFrame) {
+        printAST(pFrame);
+        pFrame.out().println();
     }
 
     @Override

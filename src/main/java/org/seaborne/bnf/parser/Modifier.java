@@ -18,38 +18,10 @@
 
 package org.seaborne.bnf.parser;
 
-import java.util.Objects;
-
-public class QuotedString extends Expression {
-
-    private final String string;
-
-    public QuotedString(String string) {
-        Objects.requireNonNull(string);
-        this.string = string;
-    }
-
-    @Override
-    public boolean printAtomic(PrintFrame pFrame) {
-        return true;
-    }
-
-    @Override
-    public void printAST(PrintFrame pFrame) {
-        pFrame.out().print("\"");
-        pFrame.out().print(string);
-        pFrame.out().print("\"");
-    }
+public abstract class Modifier extends Expression {
 
     @Override
     public void printStructure(PrintFrame pFrame) {
         printAST(pFrame);
-    }
-
-    @Override
-    public void printBNF(PrintFrame pFrame) {
-        pFrame.out().print("\"");
-        pFrame.out().print(string);
-        pFrame.out().print("\"");
     }
 }

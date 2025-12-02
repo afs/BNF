@@ -40,9 +40,15 @@ public class Alternatives extends Expression {
     }
 
     @Override
-    public void printStructure(PrintFrame pFrame) {
-        PrintFrame.printListExpressions(pFrame, "Alt", alternatives);
+    public void printAST(PrintFrame pFrame) {
+        PrintFrame.printListAST(pFrame, "Alt", alternatives);
     }
+
+    @Override
+    public void printStructure(PrintFrame pFrame) {
+        PrintFrame.printListStructure(pFrame, "alt", alternatives);
+    }
+
 
     @Override
     public void printBNF(PrintFrame pFrame) {

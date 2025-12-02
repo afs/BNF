@@ -20,7 +20,7 @@ package org.seaborne.bnf.parser;
 
 import java.util.Objects;
 
-public class HexCharacter extends Expression {
+public class HexCharacter extends Modifier {
 
     private final String character;
 
@@ -35,7 +35,7 @@ public class HexCharacter extends Expression {
     }
 
     @Override
-    public void printStructure(PrintFrame pFrame) {
+    public void printAST(PrintFrame pFrame) {
         pFrame.out().print(character);
     }
 

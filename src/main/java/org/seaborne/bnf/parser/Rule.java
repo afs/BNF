@@ -43,14 +43,26 @@ public class Rule {
 //    }
 
     /**
-     * Non-standard, non-parable format that makes the structure (sequences and alternations) explicit.
+     * Non-standard, non-parsable format that makes the structure (sequences and alternations) explicit.
      */
     public void printStructure(PrintFrame pFrame) {
         printLabel(pFrame, label);
         pFrame.out().print(identifier.getString());
         pFrame.out().print(" ::= ");
-        PrintFrame pFrame2 = pFrame;//.inc();
+        pFrame.out().println();
+        PrintFrame pFrame2 = pFrame;
         expression.printStructure(pFrame2);
+    }
+
+    /**
+     * Non-standard, AST
+     */
+    public void printAST(PrintFrame pFrame) {
+        printLabel(pFrame, label);
+        pFrame.out().print(identifier.getString());
+        pFrame.out().print(" ::= ");
+        PrintFrame pFrame2 = pFrame;//.inc();
+        expression.printAST(pFrame2);
     }
 
     /**

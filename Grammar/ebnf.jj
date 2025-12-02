@@ -52,6 +52,7 @@ TOKEN : {
 |  < OR:      "|" >
 |  < STAR:    "*" >
 |  < PLUS:    "+" >
+|  < MINUS:   "-" >
 |  < COMMA:   "," >
 |  < QUERY:   "?" >
 |  < LPAREN:  "(" >
@@ -174,10 +175,21 @@ Expression Alternatives() : { Expression expr ; }
        LOOKAHEAD(2)
        (<EOL>)?
        <OR>
-       expr = Sequence() { emitAlternativesElement(expr); }
+       expr = Sequence() { emitAlternativesElement(expr); }  // ******
     )*
     { expr = collectedAlternatives(); }
     { finishAlternatives() ; }
+    { return expr; }
+}
+
+Expression Minus(Expression LHS) : { Expression RHS , expr; }
+{
+    { startMinus(); }
+    <MINUS>
+    //    RHS = Expression()
+    RHS = Primary()
+    { expr = createMinusElement(LHS, RHS); }
+    { finishMinus(); }
     { return expr; }
 }
 
@@ -186,7 +198,11 @@ Expression Sequence() : { Expression expr; }
 {
     { startSequence() ; }
     (
-      expr = Unary() { emitSequenceElement(expr); }
+    // Maybe Minus()
+      expr = Unary()
+
+     ( expr = Minus(expr) ) ?
+     { emitSequenceElement(expr); }
     )+
     
     { expr = collectedSequence();

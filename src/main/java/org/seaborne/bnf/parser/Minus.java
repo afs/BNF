@@ -18,38 +18,43 @@
 
 package org.seaborne.bnf.parser;
 
-import java.util.Objects;
+import java.util.List;
 
-public class QuotedString extends Expression {
+public class Minus extends Expression {
+    public final Expression expr1;
+    public final Expression expr2;
 
-    private final String string;
+    public static Expression create(Expression expr1, Expression expr2) {
+        return new Minus(expr1, expr2);
+    }
 
-    public QuotedString(String string) {
-        Objects.requireNonNull(string);
-        this.string = string;
+    private Minus(Expression expr1, Expression expr2) {
+        this.expr1 = expr1 ;
+        this.expr2 = expr2 ;
     }
 
     @Override
     public boolean printAtomic(PrintFrame pFrame) {
-        return true;
+        return false;
     }
 
     @Override
     public void printAST(PrintFrame pFrame) {
-        pFrame.out().print("\"");
-        pFrame.out().print(string);
-        pFrame.out().print("\"");
+        //PrintFrame.printListExpressions(pFrame, "Alt", alternatives);
+        PrintFrame.printListAST(pFrame, "Minus", List.of(expr1, expr2));
     }
 
     @Override
     public void printStructure(PrintFrame pFrame) {
-        printAST(pFrame);
+        PrintFrame.printListStructure(pFrame, "minus", List.of(expr1, expr2));
+
     }
 
     @Override
     public void printBNF(PrintFrame pFrame) {
-        pFrame.out().print("\"");
-        pFrame.out().print(string);
-        pFrame.out().print("\"");
+        expr1.printBNF(pFrame);
+        pFrame.out().print(" - ");
+        expr2.printBNF(pFrame);
     }
+
 }

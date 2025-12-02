@@ -54,6 +54,8 @@ public class NotesBNF {
 // {return b.toString() ; }
 //}
 
+    // ISO EBNF
+    // "," is concatentation = sequence
 
 
     /* XML https://www.w3.org/TR/xml/#sec-notation

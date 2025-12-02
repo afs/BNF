@@ -68,6 +68,16 @@ public class BNFParser {
         alternativeAccumulators.removeFirst();
     }
 
+    protected void startMinus() {}
+
+    protected Expression createMinusElement(Expression expr1, Expression expr2) {
+        Expression e = Minus.create(expr1, expr2);
+        return e;
+    }
+
+    protected void finishMinus() { }
+
+
     private Deque<List<Expression>> sequenceAccumulators = new ArrayDeque<>();
     protected void startSequence() { sequenceAccumulators.addFirst(new ArrayList<>()); }
     protected void emitSequenceElement(Expression expr) { sequenceAccumulators.getFirst().add(expr); }

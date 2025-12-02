@@ -40,8 +40,13 @@ public class Sequence extends Expression {
     }
 
     @Override
+    public void printAST(PrintFrame pFrame) {
+        PrintFrame.printListAST(pFrame, "Seq", sequence);
+    }
+
+    @Override
     public void printStructure(PrintFrame pFrame) {
-        PrintFrame.printListExpressions(pFrame, "Seq", sequence);
+        PrintFrame.printListStructure(pFrame, "seq", sequence);
     }
 
     @Override

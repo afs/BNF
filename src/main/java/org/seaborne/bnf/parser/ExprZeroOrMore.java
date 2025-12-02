@@ -20,7 +20,7 @@ package org.seaborne.bnf.parser;
 
 import java.util.Objects;
 
-public class ExprZeroOrMore extends Expression {
+public class ExprZeroOrMore extends Modifier {
 
     public static Expression create(Expression expr) {
         return new ExprZeroOrMore(expr);
@@ -39,7 +39,7 @@ public class ExprZeroOrMore extends Expression {
     }
 
     @Override
-    public void printStructure(PrintFrame pFrame) {
+    public void printAST(PrintFrame pFrame) {
         PrintFrame.printModifierFunction(pFrame, expr, "*");
     }
 

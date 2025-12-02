@@ -20,7 +20,7 @@ package org.seaborne.bnf.parser;
 
 import java.util.Objects;
 
-public class ExprRepeatN extends Expression {
+public class ExprRepeatN extends Modifier {
 
     public static Expression create(Expression expr, String num) {
         return new ExprRepeatN(expr, num);
@@ -42,7 +42,7 @@ public class ExprRepeatN extends Expression {
     }
 
     @Override
-    public void printStructure(PrintFrame pFrame) {
+    public void printAST(PrintFrame pFrame) {
         String symbol = String.format("{%s}", num);
         PrintFrame.printModifierFunction(pFrame, expr, symbol);
     }

@@ -26,23 +26,48 @@ public record PrintFrame(PrintStream out, String labelFmt, String indent, int nu
     PrintFrame inc() { return new PrintFrame(out, labelFmt, indent+Internal.indent, numRules); }
 
     /** Non-standard structure print of a list. */
-    static void printListExpressions(PrintFrame pFrame, String typeName, List<Expression> list) {
+    static void printListAST(PrintFrame pFrame, String typeName, List<Expression> list) {
         pFrame.out().print("(");
         pFrame.out().print(typeName);
         PrintFrame pFrame2 = pFrame.inc();
         list.forEach(elt -> {
             pFrame.out().print(" ");
-            elt.printStructure(pFrame2);
+            elt.printAST(pFrame2);
         });
         pFrame.out().print(")");
     }
+
+    /** Non-standard structure print of a list. */
+    // XXX Nesting
+    static void printListStructure(PrintFrame pFrame, String typeName, List<Expression> list) {
+        pFrame.out().print("(");
+        pFrame.out().print(typeName);
+        PrintFrame pFrame2 = pFrame.inc();
+        pFrame2.out().println();
+        list.forEach(elt -> {
+            pFrame.out().print("  ");
+            elt.printStructure(pFrame2);
+            pFrame.out().println(" ");
+        });
+        pFrame.out().print(")");
+    }
+
 
     // Modifier, non-standard form
     static void printModifierFunction(PrintFrame pFrame, Expression expr, String modifier) {
         pFrame.out().print("(");
         pFrame.out().print(modifier);
         pFrame.out().print(" ");
-        expr.printStructure(pFrame);
+        expr.printAST(pFrame);
+        pFrame.out().print(")");
+    }
+
+    // Expression, non-standard form
+    static void printExpression1(PrintFrame pFrame, String name, Expression arg) {
+        pFrame.out().print("(");
+        pFrame.out().print(name);
+        PrintFrame pFrame2 = pFrame.inc();
+        arg.printAST(pFrame2);
         pFrame.out().print(")");
     }
 

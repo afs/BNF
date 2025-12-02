@@ -39,10 +39,16 @@ public class Primary extends Expression {
     }
 
     @Override
-    public void printStructure(PrintFrame pFrame) {
+    public void printAST(PrintFrame pFrame) {
         pFrame.out().print("(primary ");
-        expr.printStructure(pFrame);
+        expr.printAST(pFrame);
         pFrame.out().print(")");
+    }
+
+    @Override
+    public void printStructure(PrintFrame pFrame) {
+        // "( )" are invisible
+        expr.printStructure(pFrame);
     }
 
     @Override

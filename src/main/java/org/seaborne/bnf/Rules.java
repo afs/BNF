@@ -19,6 +19,7 @@
 package org.seaborne.bnf;
 
 import java.util.List;
+import java.util.function.BiConsumer;
 
 import org.seaborne.bnf.parser.Internal;
 import org.seaborne.bnf.parser.PrintFrame;
@@ -28,25 +29,67 @@ import org.seaborne.bnf.parser.Rule;
  * Operations of {@Grammar} objects.
  */
 public class Rules {
-    public static void printStructure(Grammar grammar) {
-        System.out.println("---- Grammar:");
-        printStructure(grammar.rules());
+
+    public static void printAST(Grammar grammar) {
+        System.out.println("---- AST:");
+        printEachRule(grammar.rules(), (pFrame, rule)->printAST(pFrame, rule));
     }
+    private static void printAST(PrintFrame pFrame, Rule rule) {
+        rule.printAST(pFrame);
+    }
+
+  public static void printStructure(Grammar grammar) {
+      System.out.println("---- Structure:");
+      printEachRule(grammar.rules(), (pFrame, rule)->printStructure(pFrame, rule));
+  }
+
+  private static void printStructure(PrintFrame pFrame, Rule rule) {
+      rule.printStructure(pFrame);
+  }
+
+
+  private static void printEachRule(List<Rule> rules, BiConsumer<PrintFrame, Rule> action) {
+      String fmtField = calcLabelFmt(rules);
+      PrintFrame pFrame = new PrintFrame(System.out, fmtField, Internal.firstIndent, rules.size());
+      rules.forEach(rule -> {
+          action.accept(pFrame, rule);
+          pFrame.out().println();
+      });
+  }
+
+
+
+  // OLD
 
     public static void printEBNF(Grammar grammar) {
         printEBNF(grammar.rules());
     }
 
-    private static void printStructure(List<Rule> rules) {
+    private static void printEBNF(List<Rule> rules) {
         String fmtField = calcLabelFmt(rules);
         PrintFrame pFrame = new PrintFrame(System.out, fmtField, Internal.firstIndent, rules.size());
         rules.forEach(rule -> {
-            rule.printStructure(pFrame);
+            rule.printEBNF(pFrame);
             System.out.println();
         });
         System.out.println("----");
     }
 
+//    public static void printStructure(Grammar grammar) {
+//        printStructure(grammar.rules());
+//    }
+
+
+    private static void printStructure(List<Rule> rules) {
+        String fmtField = calcLabelFmt(rules);
+        PrintFrame pFrame = new PrintFrame(System.out, fmtField, Internal.firstIndent, rules.size());
+        rules.forEach(rule -> {
+            rule.printEBNF(pFrame);
+        });
+        System.out.println("----");
+    }
+
+    //
     private static String calcLabelFmt(List<Rule> rules) {
         // Label width, excluding []
         int maxLabelWidth = -1;
@@ -69,16 +112,6 @@ public class Rules {
     // Include surrounding []
     private static int length(String label) {
         return label==null ? Internal.dftLabel.length()-2 : label.length();
-    }
-
-    private static void printEBNF(List<Rule> rules) {
-        String fmtField = calcLabelFmt(rules);
-        PrintFrame pFrame = new PrintFrame(System.out, fmtField, Internal.firstIndent, rules.size());
-        rules.forEach(rule -> {
-            rule.printEBNF(pFrame);
-            System.out.println();
-        });
-        System.out.println("----");
     }
 
 }

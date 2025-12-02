@@ -25,57 +25,59 @@ public interface EBNFParserConstants {
   /** RegularExpression Id. */
   int PLUS = 10;
   /** RegularExpression Id. */
-  int COMMA = 11;
+  int MINUS = 11;
   /** RegularExpression Id. */
-  int QUERY = 12;
+  int COMMA = 12;
   /** RegularExpression Id. */
-  int LPAREN = 13;
+  int QUERY = 13;
   /** RegularExpression Id. */
-  int RPAREN = 14;
+  int LPAREN = 14;
   /** RegularExpression Id. */
-  int LBRACK = 15;
+  int RPAREN = 15;
   /** RegularExpression Id. */
-  int RBRACK = 16;
+  int LBRACK = 16;
   /** RegularExpression Id. */
-  int LBRACE = 17;
+  int RBRACK = 17;
   /** RegularExpression Id. */
-  int RBRACE = 18;
+  int LBRACE = 18;
   /** RegularExpression Id. */
-  int SEMI = 19;
+  int RBRACE = 19;
   /** RegularExpression Id. */
-  int DOT = 20;
+  int SEMI = 20;
   /** RegularExpression Id. */
-  int CARAT = 21;
+  int DOT = 21;
   /** RegularExpression Id. */
-  int NONTERMINAL = 22;
+  int CARAT = 22;
   /** RegularExpression Id. */
-  int HEX = 23;
+  int NONTERMINAL = 23;
   /** RegularExpression Id. */
-  int UCHAR = 24;
+  int HEX = 24;
   /** RegularExpression Id. */
-  int UCHAR4 = 25;
+  int UCHAR = 25;
   /** RegularExpression Id. */
-  int UCHAR8 = 26;
+  int UCHAR4 = 26;
   /** RegularExpression Id. */
-  int QUOTED_STRING = 27;
+  int UCHAR8 = 27;
   /** RegularExpression Id. */
-  int QSTRING1 = 28;
+  int QUOTED_STRING = 28;
   /** RegularExpression Id. */
-  int QSTRING2 = 29;
+  int QSTRING1 = 29;
   /** RegularExpression Id. */
-  int AZ = 30;
+  int QSTRING2 = 30;
   /** RegularExpression Id. */
-  int DIGITS = 31;
+  int AZ = 31;
   /** RegularExpression Id. */
-  int INTEGER = 32;
+  int DIGITS = 32;
   /** RegularExpression Id. */
-  int AZN = 33;
+  int INTEGER = 33;
   /** RegularExpression Id. */
-  int HEX_CHAR = 34;
+  int AZN = 34;
   /** RegularExpression Id. */
-  int CHAR_RANGE = 35;
+  int HEX_CHAR = 35;
   /** RegularExpression Id. */
-  int WORD = 36;
+  int CHAR_RANGE = 36;
+  /** RegularExpression Id. */
+  int WORD = 37;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -95,6 +97,7 @@ public interface EBNFParserConstants {
     "\"|\"",
     "\"*\"",
     "\"+\"",
+    "\"-\"",
     "\",\"",
     "\"?\"",
     "\"(\"",

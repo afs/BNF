@@ -39,8 +39,13 @@ public class Identifier extends Expression {
     }
 
     @Override
-    public void printStructure(PrintFrame pFrame) {
+    public void printAST(PrintFrame pFrame) {
         pFrame.out().printf("(id %s)", identifier);
+    }
+
+    @Override
+    public void printStructure(PrintFrame pFrame) {
+        printAST(pFrame);
     }
 
     @Override

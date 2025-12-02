@@ -20,7 +20,7 @@ package org.seaborne.bnf.parser;
 
 import java.util.Objects;
 
-public class ExprRepeatNM extends Expression {
+public class ExprRepeatNM extends Modifier {
 
     public static Expression create(Expression expr, String min, String max) {
         return new ExprRepeatNM(expr, min, max);
@@ -45,7 +45,7 @@ public class ExprRepeatNM extends Expression {
     }
 
     @Override
-    public void printStructure(PrintFrame pFrame) {
+    public void printAST(PrintFrame pFrame) {
         String modifier = String.format("{%s,%s}", min, max);
         PrintFrame.printModifierFunction(pFrame, expr, modifier);
     }

@@ -40,11 +40,15 @@ public class CharRangeFromTo extends Expression {
     }
 
     @Override
-    public void printStructure(PrintFrame pFrame) {
+    public void printAST(PrintFrame pFrame) {
         if ( isNegative )
             System.out.printf("[^%s-%s]", str1, str2);
         else
             System.out.printf("[^%s-%s]", str1, str2);
+    }
+    @Override
+    public void printStructure(PrintFrame pFrame) {
+        printAST(pFrame);
     }
 
     @Override

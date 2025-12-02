@@ -20,7 +20,7 @@ package org.seaborne.bnf.parser;
 
 import java.util.Objects;
 
-public class ExprOneOrMore extends Expression {
+public class ExprOneOrMore extends Modifier {
 
     public static Expression create(Expression expr) {
         return new ExprOneOrMore(expr);
@@ -39,7 +39,7 @@ public class ExprOneOrMore extends Expression {
     }
 
     @Override
-    public void printStructure(PrintFrame pFrame) {
+    public void printAST(PrintFrame pFrame) {
         PrintFrame.printModifierFunction(pFrame, expr, "+");
     }
 
@@ -47,6 +47,7 @@ public class ExprOneOrMore extends Expression {
     public void printBNF(PrintFrame pFrame) {
         PrintFrame.printModifierEBNF(pFrame, expr, "+");
     }
+
 
 
 }
