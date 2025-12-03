@@ -16,36 +16,57 @@
  * limitations under the License.
  */
 
-package org.seaborne.bnf.parser;
+package org.seaborne.bnf.ast;
 
-import java.util.Objects;
+import java.util.function.Consumer;
 
-public class ExprZeroOrOne extends Modifier {
+public abstract class Modifier extends Expression {
 
-    public static Expression create(Expression expr) {
-        return new ExprZeroOrOne(expr);
+    @Override
+    public void printStructure(PrintFrame pFrame) {
+        print(pFrame, true, expr->expr.printStructure(pFrame));
     }
 
-    private final Expression expr;
+    private void print(PrintFrame pFrame, boolean withNL, Consumer<Expression> action) {
+        pFrame.out().print("(mod");
+        pFrame.out().print(getMod());
 
-    ExprZeroOrOne(Expression expr) {
-        Objects.requireNonNull(expr);
-        this.expr = expr;
+        if ( withNL ) {
+            pFrame.out().incIndent();
+            pFrame.out().println();
+        } else {
+            pFrame.out().print(" ");
+        }
+        action.accept(getExpr());
+        if ( withNL ) {
+            pFrame.out().println();
+            pFrame.out().decIndent();
+//        } else {
+//            pFrame.out().print(" ");
+        }
+        pFrame.out().println(")");
     }
 
     @Override
+    final
     public boolean printAtomic(PrintFrame pFrame) {
         return true;
     }
 
     @Override
+    final
     public void printAST(PrintFrame pFrame) {
-        PrintFrame.printModifierFunction(pFrame, expr, "?");
-
+        print(pFrame, false, expr->expr.printAST(pFrame));
     }
 
     @Override
+    final
     public void printBNF(PrintFrame pFrame) {
-        PrintFrame.printModifierEBNF(pFrame, expr, "?");
+        PrintFrame.printModifierEBNF(pFrame, getExpr(), getMod());
     }
+
+    protected abstract Expression getExpr();
+    protected abstract String getMod();
+
+
 }

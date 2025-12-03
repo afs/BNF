@@ -14,6 +14,7 @@ PARSER_BEGIN(EBNFParser)
 package org.seaborne.bnf.parser.javacc;
 
 import org.seaborne.bnf.parser.*;
+import org.seaborne.bnf.ast.*;
 
 public class EBNFParser extends BNFParser {}
 
@@ -137,14 +138,18 @@ void BlankLines() : {} {
    (EOL())*
 }
 
-String Label() : { String str = ""; }
+String Label() : { String str = ""; Token t;}
 {
-     <LBRACK>
-     ( str = Integer()
-     | str = Word()
-     )?
-     <RBRACK>
-     { return str; }
+     // Hack fix.
+     t = <CHAR_RANGE>
+     { str = removeOuter(t.image); }
+     
+//      <LBRACK>
+//      ( str = Integer()
+//      | str = Word()
+//      )?
+//      <RBRACK>
+      { return str; }
 }
 
 // LHS

@@ -16,12 +16,36 @@
  * limitations under the License.
  */
 
-package org.seaborne.bnf.parser;
+package org.seaborne.bnf.ast;
 
-public abstract class Modifier extends Expression {
+import java.util.Objects;
+
+public class ExprRepeatNM extends Modifier {
+
+    public static Expression create(Expression expr, String min, String max) {
+        return new ExprRepeatNM(expr, min, max);
+    }
+
+    private final Expression expr;
+    private final String min;
+    private final String max;
+
+    public ExprRepeatNM(Expression expr, String min, String max) {
+        Objects.requireNonNull(expr);
+//        Objects.requireNonNull(min);
+//        Objects.requireNonNull(max);
+        this.expr = expr;
+        this.min = min;
+        this.max = max;
+    }
 
     @Override
-    public void printStructure(PrintFrame pFrame) {
-        printAST(pFrame);
+    protected Expression getExpr() {
+        return expr;
+    }
+
+    @Override
+    protected String getMod() {
+        return String.format("{%s,%s}", min, max);
     }
 }

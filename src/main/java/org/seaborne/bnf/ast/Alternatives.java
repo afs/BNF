@@ -16,23 +16,24 @@
  * limitations under the License.
  */
 
-package org.seaborne.bnf.parser;
+package org.seaborne.bnf.ast;
 
 import java.util.List;
 
-public class Minus extends Expression {
-    public final Expression expr1;
-    public final Expression expr2;
+public class Alternatives extends Expression {
+    public final List<Expression> alternatives;
 
-    public static Expression create(Expression expr1, Expression expr2) {
-        return new Minus(expr1, expr2);
+    public static Expression create(List<Expression> exprs) {
+        if ( exprs.size() == 1 )
+            return exprs.getFirst();
+        return new Alternatives(exprs);
     }
 
-    private Minus(Expression expr1, Expression expr2) {
-        this.expr1 = expr1 ;
-        this.expr2 = expr2 ;
+    private Alternatives(List<Expression> exprs) {
+        alternatives = List.copyOf(exprs);
     }
 
+    // Not top level alternative (which does not need parentheses).
     @Override
     public boolean printAtomic(PrintFrame pFrame) {
         return false;
@@ -40,21 +41,17 @@ public class Minus extends Expression {
 
     @Override
     public void printAST(PrintFrame pFrame) {
-        //PrintFrame.printListExpressions(pFrame, "Alt", alternatives);
-        PrintFrame.printListAST(pFrame, "Minus", List.of(expr1, expr2));
+        PrintFrame.printListAST(pFrame, "Alt", alternatives);
     }
 
     @Override
     public void printStructure(PrintFrame pFrame) {
-        PrintFrame.printListStructure(pFrame, "minus", List.of(expr1, expr2));
-
+        PrintFrame.printListStructure(pFrame, "alt", alternatives);
     }
+
 
     @Override
     public void printBNF(PrintFrame pFrame) {
-        expr1.printBNF(pFrame);
-        pFrame.out().print(" - ");
-        expr2.printBNF(pFrame);
+        PrintFrame.printList(pFrame, " | ", alternatives);
     }
-
 }

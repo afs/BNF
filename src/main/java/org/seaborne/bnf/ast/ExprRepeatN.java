@@ -16,32 +16,33 @@
  * limitations under the License.
  */
 
-package org.seaborne.bnf.parser;
+package org.seaborne.bnf.ast;
 
 import java.util.Objects;
 
-public class HexCharacter extends Modifier {
+public class ExprRepeatN extends Modifier {
 
-    private final String character;
+    public static Expression create(Expression expr, String num) {
+        return new ExprRepeatN(expr, num);
+    }
 
-    public HexCharacter(String character) {
-        Objects.requireNonNull(character);
-        this.character = character;
+    private final Expression expr;
+    private final String num;
+
+    public ExprRepeatN(Expression expr, String num) {
+        Objects.requireNonNull(expr);
+        Objects.requireNonNull(num);
+        this.expr = expr;
+        this.num = num;
     }
 
     @Override
-    public boolean printAtomic(PrintFrame pFrame) {
-        return true;
+    protected Expression getExpr() {
+        return expr;
     }
 
     @Override
-    public void printAST(PrintFrame pFrame) {
-        pFrame.out().print(character);
+    protected String getMod() {
+        return String.format("{%s}", num);
     }
-
-    @Override
-    public void printBNF(PrintFrame pFrame) {
-        pFrame.out().print(character);
-    }
-
 }

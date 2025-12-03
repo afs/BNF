@@ -18,26 +18,21 @@
 
 package org.seaborne.bnf;
 
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.io.StringReader;
-
-import org.seaborne.bnf.parser.javacc.EBNFParser;
-import org.seaborne.bnf.parser.javacc.ParseException;
+import org.seaborne.bnf.sys.RulesReader;
+import org.seaborne.bnf.sys.RulesWriter;
 
 public class MainEBNF {
 
-    // [x] C-block comments.
+    // [ ] Labels and CHAR_RANGE. Change Label to ??
+    // [ ] Round-trip testing.
+
     // [ ] Printing Quoted strings.
     // [ ] Micro-parse character ranges.
-    // [ ] infix -
+    // [x] infix -
     // [ ] @terminals
 
     // [?] Switch to No SKIP - add WS() as needed.
 
-    // [ ] A - B    with no precedence rules.
-    // [ ] Parsing terminals
-    // [x] /* Comments used in W3C. */
     // More range [ ] possibilities - any char list, inc \]
     //    [a-zA-Z], [#xN-#xN]
     //    [abc], [#xN#xN#xN]
@@ -58,8 +53,6 @@ public class MainEBNF {
     [^abc], [^#xN#xN#xN]
     */
     // RE: <LBRACK>('^')?([^]]|"\]")*<RBRACK>
-
-    // [x]  Print EBNF
 
     // [ ] Validation
     // All productions used (body) as defined (head)
@@ -84,7 +77,21 @@ public class MainEBNF {
 
     public static void main(String... args) throws Exception {
 
-        // Print with invisible primary
+        if ( false ) {
+            // Missing : general - (like alt)
+            String str = """
+                    A ::= B C D | E (F)
+                    A ::= B{2,3}
+                    """;
+            one(str);
+            System.exit(0);
+        }
+
+        if ( true ) {
+            test(); System.exit(0);
+        }
+
+
 
         if ( false )
         {
@@ -110,44 +117,11 @@ public class MainEBNF {
         String fn1 = "Examples/rdf-turtle.bnf";
         String fn2 = "Examples/sparql-query.bnf";
 
-
         String fnx1 = "Examples/turtle.ebnf";
         String fnx2 = "Examples/SPARQL.ebnf";
         String fnx3 = "Examples/Java.ebnf";
         // All structure features
         // No escapes inside []- use #5D for ]
-
-        // Missing : general - (like alt)
-        String str = """
-IRIREF ::= '<' ([^<>"{}|^`\\]-[#x00-#x20])* '>'
-               """;
-
-//        one(str);
-//        System.exit(0);
-
-
-        String strCR = """
-//Range1 ::=    #xN
-Range1 ::=    [a-zA-Z]
-Range1 ::=    [#xN-#xN]
-Range1 ::=    [abc]
-Range1 ::=    [#xN#xN#xN]
-Range1 ::=    [^a-z]
-Range1 ::=    [^#xN-#xN]
-Range1 ::=    [^abc]
-Range1 ::=    [^#xN#xN#xN]
-                D ::=  [#x11-#x22][^0-9]
-                Z ::= [^ 0 - 9  ]
-                Z ::= [^\\]ABC]
-                Z ::= [^\\\\Z]
-                """;
-
-//        parse(str);
-//        System.exit(0);
-
-
-//        one(cardinalityStr);
-//        one(str);
 
         parseFile(fn1);
         parseFile(fn2);
@@ -160,26 +134,11 @@ Range1 ::=    [^#xN#xN#xN]
 //        System.out.println();
     }
 
-    public static Grammar parseFile(String filename) throws Exception {
+    public static Grammar parseFile(String filename) {
         System.out.println("File: "+filename);
-        InputStream input = new FileInputStream(filename);
-        EBNFParser parser = new EBNFParser(input);
-        try {
-            parser.Unit();
-            System.out.println("-- Parse succeeded.");
-            System.out.println();
-            return parser.getGrammar();
-        } catch (ParseException e) {
-            System.out.println(e.getMessage());
-            return null;
-            //e.printStackTrace();
-        }
-//        Grammar grammar = parser.getGrammar();
-//        Rules.printStructure(grammar);
-//        System.out.println("<><><><>");
-//        Rules.printEBNF(grammar);
-//        System.out.println();
-
+        Grammar grammar = RulesReader.parseFile(filename);
+        System.out.println("  Productions: "+grammar.rules().size());
+        return grammar;
     }
 
     public static void test() throws Exception {
@@ -191,13 +150,19 @@ Range1 ::=    [^#xN#xN#xN]
                 [4] A ::= B{2,*}
                 [5] A ::= B{,4}
                 [6] A ::= B{,*}
+
+
                 """;
         // All structure features
         String featureStr = """
+                [10] A ::= B
+                [11] A ::= B C
+                [12] A ::= B | C D
+                [13] A ::= B | C - D
+                [13] A ::= B - C D
+
                 // Comment
             [1] A ::= B
-            [2] A ::= Z  ?
-
                         A ::= A2* | (A3 | A4)? | A5 A6 | A7
             C ::= #x0D*
             D ::=  [ #x11 - #x22 ] [^ 0-9]    //END
@@ -214,47 +179,23 @@ Range1 ::=    [^#xN#xN#xN]
                 //
                 """;
         String str = "";
+//      one(str);
 
-//        one(cardinalityStr);
-        one(featureStr);
-//        one(str);
-    }
-
-    private static void parse(String text) {
-        EBNFParser parser = new EBNFParser(new StringReader(text));
-        try {
-            parser.Unit();
-            System.out.println("-- Parse succeeded.");
-            System.out.println();
-        } catch (ParseException e) {
-            printText(text);
-            System.out.println(e.getMessage());
-            return;
-            //e.printStackTrace();
-        }
+        one(cardinalityStr);
+//        one(featureStr);
     }
 
     private static void one(String text) {
         printText(text);
         System.out.println();
-        EBNFParser parser = new EBNFParser(new StringReader(text));
-        try {
-            parser.Unit();
-            System.out.println("-- Parse succeeded.");
-            System.out.println();
-        } catch (ParseException e) {
-            System.out.println(e.getMessage());
-            return;
-            //e.printStackTrace();
-        }
-        Grammar grammar = parser.getGrammar();
 
-
-        Rules.printAST(grammar);
+        Grammar grammar = RulesReader.parseString(text);
+        System.out.println("-- Parse succeeded.");
+        RulesWriter.printAST(grammar);
         System.out.println("<><><><>");
-//        Rules.printStructure(grammar);
-//        System.out.println("<><><><>");
-        Rules.printEBNF(grammar);
+        RulesWriter.printStructure(grammar);
+        System.out.println("<><><><>");
+        RulesWriter.printEBNF(grammar);
         System.out.println();
     }
 

@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package org.seaborne.bnf.parser;
+package org.seaborne.bnf.ast;
 
 import java.util.Objects;
 
@@ -34,20 +34,12 @@ public class ExprOneOrMore extends Modifier {
     }
 
     @Override
-    public boolean printAtomic(PrintFrame pFrame) {
-        return true;
+    protected Expression getExpr() {
+        return expr;
     }
 
     @Override
-    public void printAST(PrintFrame pFrame) {
-        PrintFrame.printModifierFunction(pFrame, expr, "+");
+    protected String getMod() {
+        return "+";
     }
-
-    @Override
-    public void printBNF(PrintFrame pFrame) {
-        PrintFrame.printModifierEBNF(pFrame, expr, "+");
-    }
-
-
-
 }

@@ -16,42 +16,46 @@
  * limitations under the License.
  */
 
-package org.seaborne.bnf.parser;
+package org.seaborne.bnf.ast;
 
-import java.util.List;
+import java.util.Objects;
 
-public class Alternatives extends Expression {
-    public final List<Expression> alternatives;
+/**
+ * Input grammar had "( ... )" which we preserve.
+ */
+public class Primary extends Expression {
 
-    public static Expression create(List<Expression> exprs) {
-        if ( exprs.size() == 1 )
-            return exprs.getFirst();
-        return new Alternatives(exprs);
+    private final Expression expr;
+
+    public Primary(Expression expr) {
+        Objects.requireNonNull(expr);
+        this.expr = expr;
     }
 
-    private Alternatives(List<Expression> exprs) {
-        alternatives = List.copyOf(exprs);
-    }
-
-    // Not top level alternative (which does not need parentheses).
     @Override
     public boolean printAtomic(PrintFrame pFrame) {
-        return false;
+        // Does not need addition parentheses
+        return true;
     }
 
     @Override
     public void printAST(PrintFrame pFrame) {
-        PrintFrame.printListAST(pFrame, "Alt", alternatives);
+        pFrame.out().print("(primary ");
+        expr.printAST(pFrame);
+        pFrame.out().print(")");
     }
 
     @Override
     public void printStructure(PrintFrame pFrame) {
-        PrintFrame.printListStructure(pFrame, "alt", alternatives);
+        // "( )" are invisible
+        expr.printStructure(pFrame);
     }
-
 
     @Override
     public void printBNF(PrintFrame pFrame) {
-        PrintFrame.printList(pFrame, " | ", alternatives);
+        pFrame.out().print("( ");
+        expr.printBNF(pFrame);
+        pFrame.out().print(" )");
     }
+
 }

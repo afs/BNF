@@ -16,21 +16,22 @@
  * limitations under the License.
  */
 
-package org.seaborne.bnf.parser;
+package org.seaborne.bnf.ast;
 
-import java.util.Objects;
+import java.util.List;
 
-public class ExprZeroOrMore extends Modifier {
+public class Sequence extends Expression {
 
-    public static Expression create(Expression expr) {
-        return new ExprZeroOrMore(expr);
+    public static Expression create(List<Expression> exprs) {
+        if ( exprs.size() == 1 )
+            return exprs.getFirst();
+        return new Sequence(exprs);
     }
 
-    private final Expression expr;
+    public final List<Expression> sequence;
 
-    ExprZeroOrMore(Expression expr) {
-        Objects.requireNonNull(expr);
-        this.expr = expr;
+    private Sequence(List<Expression> exprs) {
+        sequence = List.copyOf(exprs);
     }
 
     @Override
@@ -40,11 +41,16 @@ public class ExprZeroOrMore extends Modifier {
 
     @Override
     public void printAST(PrintFrame pFrame) {
-        PrintFrame.printModifierFunction(pFrame, expr, "*");
+        PrintFrame.printListAST(pFrame, "Seq", sequence);
+    }
+
+    @Override
+    public void printStructure(PrintFrame pFrame) {
+        PrintFrame.printListStructure(pFrame, "seq", sequence);
     }
 
     @Override
     public void printBNF(PrintFrame pFrame) {
-        PrintFrame.printModifierEBNF(pFrame, expr, "*");
+        PrintFrame.printList(pFrame, " ", sequence);
     }
 }

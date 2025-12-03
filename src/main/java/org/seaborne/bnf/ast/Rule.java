@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package org.seaborne.bnf.parser;
+package org.seaborne.bnf.ast;
 
 public class Rule {
 
@@ -42,16 +42,19 @@ public class Rule {
 //        // No "Primary"
 //    }
 
+    private static int RULE_BODY_OFFSET = 4;
+
     /**
      * Non-standard, non-parsable format that makes the structure (sequences and alternations) explicit.
      */
     public void printStructure(PrintFrame pFrame) {
         printLabel(pFrame, label);
         pFrame.out().print(identifier.getString());
-        pFrame.out().print(" ::= ");
+        pFrame.out().print(" ::=");
         pFrame.out().println();
-        PrintFrame pFrame2 = pFrame;
-        expression.printStructure(pFrame2);
+        pFrame.out().incIndent(RULE_BODY_OFFSET);
+        expression.printStructure(pFrame);
+        pFrame.out().decIndent(RULE_BODY_OFFSET);
     }
 
     /**
@@ -61,8 +64,7 @@ public class Rule {
         printLabel(pFrame, label);
         pFrame.out().print(identifier.getString());
         pFrame.out().print(" ::= ");
-        PrintFrame pFrame2 = pFrame;//.inc();
-        expression.printAST(pFrame2);
+        expression.printAST(pFrame);
     }
 
     /**
@@ -72,10 +74,8 @@ public class Rule {
         printLabel(pFrame, label);
         pFrame.out().print(identifier.getString());
         pFrame.out().print(" ::= ");
-        PrintFrame pFrame2 = pFrame;//.inc();
-
         // No need for brackets here
-        expression.printBNF(pFrame2);
+        expression.printBNF(pFrame);
     }
 
     private void printLabel(PrintFrame pFrame, String label) {

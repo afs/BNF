@@ -16,22 +16,17 @@
  * limitations under the License.
  */
 
-package org.seaborne.bnf.parser;
+package org.seaborne.bnf.ast;
 
-import java.util.List;
+import java.util.Objects;
 
-public class Sequence extends Expression {
+public class HexCharacter extends Expression {
 
-    public static Expression create(List<Expression> exprs) {
-        if ( exprs.size() == 1 )
-            return exprs.getFirst();
-        return new Sequence(exprs);
-    }
+    private final String character;
 
-    public final List<Expression> sequence;
-
-    private Sequence(List<Expression> exprs) {
-        sequence = List.copyOf(exprs);
+    public HexCharacter(String character) {
+        Objects.requireNonNull(character);
+        this.character = character;
     }
 
     @Override
@@ -41,16 +36,16 @@ public class Sequence extends Expression {
 
     @Override
     public void printAST(PrintFrame pFrame) {
-        PrintFrame.printListAST(pFrame, "Seq", sequence);
+        pFrame.out().print(character);
     }
 
     @Override
     public void printStructure(PrintFrame pFrame) {
-        PrintFrame.printListStructure(pFrame, "seq", sequence);
+        pFrame.out().print(character);
     }
 
     @Override
     public void printBNF(PrintFrame pFrame) {
-        PrintFrame.printList(pFrame, " ", sequence);
+        pFrame.out().print(character);
     }
 }

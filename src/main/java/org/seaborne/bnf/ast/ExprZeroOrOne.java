@@ -16,40 +16,30 @@
  * limitations under the License.
  */
 
-package org.seaborne.bnf.parser;
+package org.seaborne.bnf.ast;
 
 import java.util.Objects;
 
-public class ExprRepeatN extends Modifier {
+public class ExprZeroOrOne extends Modifier {
 
-    public static Expression create(Expression expr, String num) {
-        return new ExprRepeatN(expr, num);
+    public static Expression create(Expression expr) {
+        return new ExprZeroOrOne(expr);
     }
 
     private final Expression expr;
-    private final String num;
 
-    ExprRepeatN(Expression expr, String num) {
+    ExprZeroOrOne(Expression expr) {
         Objects.requireNonNull(expr);
-        Objects.requireNonNull(num);
         this.expr = expr;
-        this.num = num;
     }
 
     @Override
-    public boolean printAtomic(PrintFrame pFrame) {
-        return true;
+    protected Expression getExpr() {
+        return expr;
     }
 
     @Override
-    public void printAST(PrintFrame pFrame) {
-        String symbol = String.format("{%s}", num);
-        PrintFrame.printModifierFunction(pFrame, expr, symbol);
-    }
-
-    @Override
-    public void printBNF(PrintFrame pFrame) {
-        String symbol = String.format("{%s}", num);
-        PrintFrame.printModifierEBNF(pFrame, expr, symbol);
+    protected String getMod() {
+        return "?";
     }
 }

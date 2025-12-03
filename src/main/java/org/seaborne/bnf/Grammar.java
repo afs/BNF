@@ -22,8 +22,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.seaborne.bnf.parser.Identifier;
-import org.seaborne.bnf.parser.Rule;
+import org.seaborne.bnf.ast.Identifier;
+import org.seaborne.bnf.ast.Rule;
 
 /**
  * A grammar is a collection of {@link Rule} elements.

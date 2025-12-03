@@ -16,10 +16,38 @@
  * limitations under the License.
  */
 
-package org.seaborne.bnf.parser;
+package org.seaborne.bnf.ast;
 
-public class Internal {
-    public static String firstIndent = "";
-    public static String indent = "    ";
-    public static String dftLabel = "[_]";
+import java.util.Objects;
+
+// Unparsed character range, excluding the surounding [...]
+public class CharRange extends Expression {
+
+    private final String str;
+
+    public CharRange(String str) {
+        Objects.requireNonNull(str);
+        this.str = str;
+    }
+
+    @Override
+    public boolean printAtomic(PrintFrame pFrame) {
+        return true;
+    }
+
+    @Override
+    public void printAST(PrintFrame pFrame) {
+        System.out.printf("[%s]", str);
+    }
+
+    @Override
+    public void printStructure(PrintFrame pFrame) {
+        printAST(pFrame);
+        pFrame.out().println();
+    }
+
+    @Override
+    public void printBNF(PrintFrame pFrame) {
+        System.out.printf("[%s]", str);
+    }
 }

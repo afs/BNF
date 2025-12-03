@@ -16,42 +16,41 @@
  * limitations under the License.
  */
 
-package org.seaborne.bnf.parser;
+package org.seaborne.bnf.ast;
 
-import java.io.PrintStream;
 import java.util.List;
 
-public record PrintFrame(PrintStream out, String labelFmt, String indent, int numRules) {
+import org.seaborne.bnf.sys.IndentedOutput;
 
-    PrintFrame inc() { return new PrintFrame(out, labelFmt, indent+Internal.indent, numRules); }
+public record PrintFrame(IndentedOutput out, String labelFmt, String indent, int numRules) {
 
-    /** Non-standard structure print of a list. */
+    //PrintFrame inc() { return new PrintFrame(out, labelFmt, indent+Internal.indent, numRules); }
+
+    /** Print a list of expressions as the AST structure. */
     static void printListAST(PrintFrame pFrame, String typeName, List<Expression> list) {
         pFrame.out().print("(");
         pFrame.out().print(typeName);
-        PrintFrame pFrame2 = pFrame.inc();
         list.forEach(elt -> {
             pFrame.out().print(" ");
-            elt.printAST(pFrame2);
+            elt.printAST(pFrame);
         });
         pFrame.out().print(")");
     }
 
     /** Non-standard structure print of a list. */
-    // XXX Nesting
+    /** Print a list of expressions as an indented lisp-like structure. */
     static void printListStructure(PrintFrame pFrame, String typeName, List<Expression> list) {
         pFrame.out().print("(");
         pFrame.out().print(typeName);
-        PrintFrame pFrame2 = pFrame.inc();
-        pFrame2.out().println();
+        pFrame.out().println();
+        pFrame.out().incIndent();
         list.forEach(elt -> {
-            pFrame.out().print("  ");
-            elt.printStructure(pFrame2);
-            pFrame.out().println(" ");
+            elt.printStructure(pFrame);
+            pFrame.out().println();
         });
+        pFrame.out().decIndent();
         pFrame.out().print(")");
     }
-
 
     // Modifier, non-standard form
     static void printModifierFunction(PrintFrame pFrame, Expression expr, String modifier) {
@@ -66,14 +65,14 @@ public record PrintFrame(PrintStream out, String labelFmt, String indent, int nu
     static void printExpression1(PrintFrame pFrame, String name, Expression arg) {
         pFrame.out().print("(");
         pFrame.out().print(name);
-        PrintFrame pFrame2 = pFrame.inc();
-        arg.printAST(pFrame2);
+        pFrame.out().incIndent();
+        arg.printAST(pFrame);
+        pFrame.out().decIndent();
         pFrame.out().print(")");
     }
 
     /** Print EBNF */
     static void printList(PrintFrame pFrame, String separator, List<Expression> list) {
-        PrintFrame pFrame2 = pFrame.inc();
         boolean first = true;
         for ( Expression elt : list ) {
             if ( first )

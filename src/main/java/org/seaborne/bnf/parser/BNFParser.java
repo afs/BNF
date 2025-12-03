@@ -18,15 +18,13 @@
 
 package org.seaborne.bnf.parser;
 
-import static java.lang.String.format;
-
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
 
 import org.seaborne.bnf.Grammar;
-import org.seaborne.bnf.parser.javacc.ParseException;
+import org.seaborne.bnf.ast.*;
 
 public class BNFParser {
 
@@ -119,22 +117,36 @@ public class BNFParser {
         return new HexCharacter(string);
     }
 
+
+
     protected Expression createCharacterRange(String string) {
         // Image includes the "[...]".
-        String x = string.substring(1, string.length()-1);
-        return new CharRange(x);
+        return new CharRange(removeOuter(string, 1, 1));
+    }
+
+    protected String removeOuter(String string) {
+        return removeOuter(string, 1, 1);
+    }
+
+    protected String removeOuter(String string, int first, int last) {
+        int x = first;
+        int y = string.length()-last;
+        if ( x > y )
+            throw new IllegalArgumentException("String '"+string+"' not long enough for ("+first+", "+last+")");
+        String str = string.substring(x, y);
+        return str;
     }
 
 //    protected Expression createCharacterRange(String string1, String string2, boolean isNegative) {
 //        return new CharRange(string1, string2, isNegative);
 //    }
 
-    // Replace by lexical state.
-    protected String wordToRangeChar(String string, int line, int column) throws ParseException {
-        if ( string.length() != 1 )
-            throw new ParseException(format("[%d, %d] Not a range character '%s'", line, column, string));
-        return string;
-    }
+//    // Replace by lexical state.
+//    protected String wordToRangeChar(String string, int line, int column) throws ParseException {
+//        if ( string.length() != 1 )
+//            throw new ParseException(format("[%d, %d] Not a range character '%s'", line, column, string));
+//        return string;
+//    }
 
     protected Expression createExprRepeat(Expression expr, String str1, String str2) {
         if ( str2 == null )

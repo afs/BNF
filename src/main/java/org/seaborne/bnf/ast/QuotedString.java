@@ -16,27 +16,17 @@
  * limitations under the License.
  */
 
-package org.seaborne.bnf.parser;
+package org.seaborne.bnf.ast;
 
 import java.util.Objects;
 
-public class ExprRepeatNM extends Modifier {
+public class QuotedString extends Expression {
 
-    public static Expression create(Expression expr, String min, String max) {
-        return new ExprRepeatNM(expr, min, max);
-    }
+    private final String string;
 
-    private final Expression expr;
-    private final String min;
-    private final String max;
-
-    ExprRepeatNM(Expression expr, String min, String max) {
-        Objects.requireNonNull(expr);
-//        Objects.requireNonNull(min);
-//        Objects.requireNonNull(max);
-        this.expr = expr;
-        this.min = min;
-        this.max = max;
+    public QuotedString(String string) {
+        Objects.requireNonNull(string);
+        this.string = string;
     }
 
     @Override
@@ -46,13 +36,20 @@ public class ExprRepeatNM extends Modifier {
 
     @Override
     public void printAST(PrintFrame pFrame) {
-        String modifier = String.format("{%s,%s}", min, max);
-        PrintFrame.printModifierFunction(pFrame, expr, modifier);
+        pFrame.out().print("\"");
+        pFrame.out().print(string);
+        pFrame.out().print("\"");
+    }
+
+    @Override
+    public void printStructure(PrintFrame pFrame) {
+        printAST(pFrame);
     }
 
     @Override
     public void printBNF(PrintFrame pFrame) {
-        String modifier = String.format("{%s,%s}", min, max);
-        PrintFrame.printModifierEBNF(pFrame, expr, modifier);
+        pFrame.out().print("\"");
+        pFrame.out().print(string);
+        pFrame.out().print("\"");
     }
 }

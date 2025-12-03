@@ -16,17 +16,10 @@
  * limitations under the License.
  */
 
-package org.seaborne.bnf.parser;
+package org.seaborne.bnf.ast;
 
-interface BodyNode {
-    // Policy - leave cursor at end of line.
-    public void printAST(PrintFrame pFrame);
-    
-    // Print as a lisp-like nested structure.
-    public void printStructure(PrintFrame pFrame);
-    
-    public void printBNF(PrintFrame pFrame);
-
-    // Does this node need brackets?
-    public boolean printAtomic(PrintFrame pFrame);
+public class Internal {
+    public static String firstIndent = "";
+    public static String indent = "    ";
+    public static String dftLabel = "[_]";
 }

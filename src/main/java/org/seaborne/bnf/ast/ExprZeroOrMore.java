@@ -16,8 +16,30 @@
  * limitations under the License.
  */
 
-package org.seaborne.bnf.parser;
+package org.seaborne.bnf.ast;
 
-public abstract class Expression implements BodyNode {
+import java.util.Objects;
 
+public class ExprZeroOrMore extends Modifier {
+
+    public static Expression create(Expression expr) {
+        return new ExprZeroOrMore(expr);
+    }
+
+    private final Expression expr;
+
+    ExprZeroOrMore(Expression expr) {
+        Objects.requireNonNull(expr);
+        this.expr = expr;
+    }
+
+    @Override
+    protected Expression getExpr() {
+        return expr;
+    }
+
+    @Override
+    protected String getMod() {
+        return "*";
+    }
 }

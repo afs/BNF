@@ -16,40 +16,17 @@
  * limitations under the License.
  */
 
-package org.seaborne.bnf.parser;
+package org.seaborne.bnf.ast;
 
-import java.util.Objects;
+interface BodyNode {
+    // Policy - leave cursor at end of line.
+    public void printAST(PrintFrame pFrame);
+    
+    // Print as a lisp-like nested structure.
+    public void printStructure(PrintFrame pFrame);
+    
+    public void printBNF(PrintFrame pFrame);
 
-public class QuotedString extends Expression {
-
-    private final String string;
-
-    public QuotedString(String string) {
-        Objects.requireNonNull(string);
-        this.string = string;
-    }
-
-    @Override
-    public boolean printAtomic(PrintFrame pFrame) {
-        return true;
-    }
-
-    @Override
-    public void printAST(PrintFrame pFrame) {
-        pFrame.out().print("\"");
-        pFrame.out().print(string);
-        pFrame.out().print("\"");
-    }
-
-    @Override
-    public void printStructure(PrintFrame pFrame) {
-        printAST(pFrame);
-    }
-
-    @Override
-    public void printBNF(PrintFrame pFrame) {
-        pFrame.out().print("\"");
-        pFrame.out().print(string);
-        pFrame.out().print("\"");
-    }
+    // Does this node need brackets?
+    public boolean printAtomic(PrintFrame pFrame);
 }

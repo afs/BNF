@@ -16,22 +16,17 @@
  * limitations under the License.
  */
 
-package org.seaborne.bnf.parser;
+package org.seaborne.bnf.ast;
 
 import java.util.Objects;
 
-public class CharRangeFromTo extends Expression {
+public class Identifier extends Expression {
 
-    private final String str1;
-    private final String str2;
-    private final boolean isNegative;
+    private final String identifier;
 
-    public CharRangeFromTo(String str1, String str2, boolean isNegative) {
-        Objects.requireNonNull(str1);
-        Objects.requireNonNull(str2);
-        this.str1 = str1;
-        this.str2 = str2;
-        this.isNegative = isNegative;
+    public Identifier(String identifier) {
+        Objects.requireNonNull(identifier);
+        this.identifier = identifier;
     }
 
     @Override
@@ -39,13 +34,15 @@ public class CharRangeFromTo extends Expression {
         return true;
     }
 
+    public String getString() {
+        return identifier;
+    }
+
     @Override
     public void printAST(PrintFrame pFrame) {
-        if ( isNegative )
-            System.out.printf("[^%s-%s]", str1, str2);
-        else
-            System.out.printf("[^%s-%s]", str1, str2);
+        pFrame.out().printf("(id %s)", identifier);
     }
+
     @Override
     public void printStructure(PrintFrame pFrame) {
         printAST(pFrame);
@@ -53,9 +50,6 @@ public class CharRangeFromTo extends Expression {
 
     @Override
     public void printBNF(PrintFrame pFrame) {
-        if ( isNegative )
-            System.out.printf("[^%s-%s]", str1, str2);
-        else
-            System.out.printf("[^%s-%s]", str1, str2);
+        pFrame.out().print(identifier);
     }
 }
