@@ -23,7 +23,9 @@ import org.seaborne.bnf.sys.RulesWriter;
 
 public class MainEBNF {
 
-    // [ ] Labels and CHAR_RANGE. Change Label to ??
+    // [ ] Labels and CHAR_RANGE. Change Label to ?? Crude fix.
+    //    Special comment.
+
     // [ ] Round-trip testing.
 
     // [ ] Printing Quoted strings.
@@ -76,6 +78,11 @@ public class MainEBNF {
     // * Allow "\" as continuation marker end of line, then optional labels.
 
     public static void main(String... args) throws Exception {
+
+        if ( true ) {
+            test();
+            return;
+        }
 
         if ( false ) {
             // Missing : general - (like alt)
@@ -143,26 +150,27 @@ public class MainEBNF {
 
     public static void test() throws Exception {
         String cardinalityStr = """
-                [1] A ::= B{2,3}
-                [2] A ::= B{*}
-                [2] A ::= B{2}
-                [3] A ::= B{2,}
-                [4] A ::= B{2,*}
-                [5] A ::= B{,4}
-                [6] A ::= B{,*}
+                 A ::= B{2,3}
+                 A ::= B{*}
+                 A ::= B{2}
+                 A ::= B{2,}
+                 A ::= B{2,*}
+                 A ::= B{,4}
+                 A ::= B{,*}
 
 
                 """;
         // All structure features
         String featureStr = """
-                [10] A ::= B
-                [11] A ::= B C
-                [12] A ::= B | C D
-                [13] A ::= B | C - D
-                [13] A ::= B - C D
+                 A ::= B
+                 ~label~ A :: B
+                 A ::= B C
+                 A ::= B | C D
+                 A ::= B | C - D
+                 A ::= B - C D
 
                 // Comment
-            [1] A ::= B
+            A ::= B
                         A ::= A2* | (A3 | A4)? | A5 A6 | A7
             C ::= #x0D*
             D ::=  [ #x11 - #x22 ] [^ 0-9]    //END
@@ -179,7 +187,7 @@ public class MainEBNF {
                 //
                 """;
         String str = "";
-//      one(str);
+//      one(featureStr);
 
         one(cardinalityStr);
 //        one(featureStr);

@@ -20,40 +20,6 @@ package org.seaborne.bnf;
 
 public class NotesBNF {
 
-// // Source - https://stackoverflow.com/a/52727410
-// // Posted by Theodore Norvell
-// // Retrieved 2025-12-01, License - CC BY-SA 4.0
-//
-// TOKEN : { < BLOCK_COMMENT_START : "/*" >  : WITHIN_BLOCK_COMMENT }
-// <WITHIN_BLOCK_COMMENT> TOKEN: { <CHAR_IN_COMMENT: ~[] > }
-// <WITHIN_BLOCK_COMMENT> TOKEN: { < END_BLOCK_COMMENT: "*/" > : DEFAULT }
-//
-// SKIP : {
-//   "\n" | " "
-// }
-//
-////Source - https://stackoverflow.com/a/52727410
-////Posted by Theodore Norvell
-////Retrieved 2025-12-01, License - CC BY-SA 4.0
-//
-//void start() : {String s ; } {
-//  (
-//      s = comment()  {System.out.println(s); }
-//  )*
-//}
-//
-//String comment() :
-//{   Token t ;
-//  StringBuffer b = new StringBuffer() ;
-//}
-//{  <START_BLOCK_COMMENT>
-// (
-//       t=<CHAR_IN_COMMENT>  {b.append( t.image ) ; }
-// )*
-// <END_BLOCK_COMMENT>
-// {return b.toString() ; }
-//}
-
     // ISO EBNF
     // "," is concatentation = sequence
 

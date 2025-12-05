@@ -28,8 +28,7 @@ public class Rule {
     private final String label;
     private final Identifier identifier;
     private final Expression expression;
-    //private final String defaultLabel = "[_]";
-    private final String defaultLabel = "_";
+    private final String defaultLabel = null;
 
     public Rule(String label, Identifier identifier, Expression expr) {
         this.label = label;
@@ -84,7 +83,7 @@ public class Rule {
 
         String x;
         if (label != null )
-            x = String.format("[%s] ", label);
+            x = String.format("~%s~ ", label);
             //x = String.format("@%s", label);
         else
             x = defaultLabel+" ";

@@ -47,37 +47,39 @@ public interface EBNFParserConstants {
   /** RegularExpression Id. */
   int DOT = 21;
   /** RegularExpression Id. */
-  int CARAT = 22;
+  int TILDA = 22;
   /** RegularExpression Id. */
-  int NONTERMINAL = 23;
+  int CARAT = 23;
   /** RegularExpression Id. */
-  int HEX = 24;
+  int NONTERMINAL = 24;
   /** RegularExpression Id. */
-  int UCHAR = 25;
+  int HEX = 25;
   /** RegularExpression Id. */
-  int UCHAR4 = 26;
+  int UCHAR = 26;
   /** RegularExpression Id. */
-  int UCHAR8 = 27;
+  int UCHAR4 = 27;
   /** RegularExpression Id. */
-  int QUOTED_STRING = 28;
+  int UCHAR8 = 28;
   /** RegularExpression Id. */
-  int QSTRING1 = 29;
+  int QUOTED_STRING = 29;
   /** RegularExpression Id. */
-  int QSTRING2 = 30;
+  int QSTRING1 = 30;
   /** RegularExpression Id. */
-  int AZ = 31;
+  int QSTRING2 = 31;
   /** RegularExpression Id. */
-  int DIGITS = 32;
+  int AZ = 32;
   /** RegularExpression Id. */
-  int INTEGER = 33;
+  int DIGITS = 33;
   /** RegularExpression Id. */
-  int AZN = 34;
+  int INTEGER = 34;
   /** RegularExpression Id. */
-  int HEX_CHAR = 35;
+  int AZN = 35;
   /** RegularExpression Id. */
-  int CHAR_RANGE = 36;
+  int HEX_CHAR = 36;
   /** RegularExpression Id. */
-  int WORD = 37;
+  int CHAR_RANGE = 37;
+  /** RegularExpression Id. */
+  int WORD = 38;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -108,6 +110,7 @@ public interface EBNFParserConstants {
     "\"}\"",
     "\";\"",
     "\".\"",
+    "\"~\"",
     "\"^\"",
     "<NONTERMINAL>",
     "<HEX>",

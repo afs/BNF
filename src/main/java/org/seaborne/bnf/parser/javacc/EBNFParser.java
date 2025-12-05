@@ -21,8 +21,8 @@ startGrammar();
     label_1:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+      case TILDA:
       case NONTERMINAL:
-      case CHAR_RANGE:
       case WORD:{
         ;
         break;
@@ -42,7 +42,7 @@ finishGrammar();
   final public Rule Rule() throws ParseException {Identifier identifier ; Expression expr; Rule rule; String label = null;
 startRule();
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
-    case CHAR_RANGE:{
+    case TILDA:{
       label = Label();
       break;
       }
@@ -109,9 +109,31 @@ rule = createRule(label, identifier, expr);
 }
 
   final public String Label() throws ParseException {String str = ""; Token t;
-    // Hack fix.
-         t = jj_consume_token(CHAR_RANGE);
-str = removeOuter(t.image);
+    jj_consume_token(TILDA);
+    switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+    case INTEGER:
+    case WORD:{
+      switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+      case INTEGER:{
+        str = Integer();
+        break;
+        }
+      case WORD:{
+        str = Word();
+        break;
+        }
+      default:
+        jj_la1[6] = jj_gen;
+        jj_consume_token(-1);
+        throw new ParseException();
+      }
+      break;
+      }
+    default:
+      jj_la1[7] = jj_gen;
+      ;
+    }
+    jj_consume_token(TILDA);
 {if ("" != null) return str;}
     throw new Error("Missing return statement in function");
 }
@@ -130,7 +152,7 @@ str = removeOuter(t.image);
       break;
       }
     default:
-      jj_la1[6] = jj_gen;
+      jj_la1[8] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -162,7 +184,7 @@ emitAlternativesElement(expr);
         break;
         }
       default:
-        jj_la1[7] = jj_gen;
+        jj_la1[9] = jj_gen;
         ;
       }
       jj_consume_token(OR);
@@ -199,7 +221,7 @@ startSequence() ;
         break;
         }
       default:
-        jj_la1[8] = jj_gen;
+        jj_la1[10] = jj_gen;
         ;
       }
 emitSequenceElement(expr);
@@ -214,7 +236,7 @@ emitSequenceElement(expr);
         break;
         }
       default:
-        jj_la1[9] = jj_gen;
+        jj_la1[11] = jj_gen;
         break label_4;
       }
     }
@@ -252,14 +274,14 @@ expr = createExprOneOrMore(expr);
         break;
         }
       default:
-        jj_la1[10] = jj_gen;
+        jj_la1[12] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
       break;
       }
     default:
-      jj_la1[11] = jj_gen;
+      jj_la1[13] = jj_gen;
       ;
     }
 {if ("" != null) return expr;}
@@ -283,13 +305,13 @@ str2 = "";
           break;
           }
         default:
-          jj_la1[12] = jj_gen;
+          jj_la1[14] = jj_gen;
           ;
         }
         break;
         }
       default:
-        jj_la1[13] = jj_gen;
+        jj_la1[15] = jj_gen;
         ;
       }
       break;
@@ -301,7 +323,7 @@ str1 = "";
       break;
       }
     default:
-      jj_la1[14] = jj_gen;
+      jj_la1[16] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -323,7 +345,7 @@ str1 = "";
       break;
       }
     default:
-      jj_la1[15] = jj_gen;
+      jj_la1[17] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -365,7 +387,7 @@ str1 = "";
       break;
       }
     default:
-      jj_la1[16] = jj_gen;
+      jj_la1[18] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -444,113 +466,113 @@ String Word() throws ParseException {Token t; String str;
     finally { jj_save(0, xla); }
   }
 
-  private boolean jj_3R_CharacterRange_291_5_17()
- {
-    if (jj_scan_token(CHAR_RANGE)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_Primary_266_7_12()
- {
-    if (jj_scan_token(LPAREN)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_Unary_220_5_7()
- {
-    if (jj_3R_Primary_259_5_8()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_Primary_264_7_11()
- {
-    if (jj_scan_token(QUOTED_STRING)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_Word_333_5_15()
- {
-    if (jj_scan_token(WORD)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_Primary_262_7_10()
- {
-    if (jj_3R_Word_333_5_15()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_Primary_260_7_9()
- {
-    if (jj_scan_token(NONTERMINAL)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_Primary_259_5_8()
- {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_Primary_260_7_9()) {
-    jj_scanpos = xsp;
-    if (jj_3R_Primary_262_7_10()) {
-    jj_scanpos = xsp;
-    if (jj_3R_Primary_264_7_11()) {
-    jj_scanpos = xsp;
-    if (jj_3R_Primary_266_7_12()) {
-    jj_scanpos = xsp;
-    if (jj_3R_Primary_274_7_13()) {
-    jj_scanpos = xsp;
-    if (jj_3R_Primary_276_7_14()) return true;
-    }
-    }
-    }
-    }
-    }
-    return false;
-  }
-
-  private boolean jj_3R_Character_282_4_16()
- {
-    if (jj_scan_token(HEX_CHAR)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_Primary_276_7_14()
- {
-    if (jj_3R_CharacterRange_291_5_17()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_Sequence_207_7_6()
- {
-    if (jj_3R_Unary_220_5_7()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_Primary_274_7_13()
- {
-    if (jj_3R_Character_282_4_16()) return true;
-    return false;
-  }
-
   private boolean jj_3_1()
  {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_scan_token(6)) jj_scanpos = xsp;
     if (jj_scan_token(OR)) return true;
-    if (jj_3R_Sequence_204_5_5()) return true;
+    if (jj_3R_Sequence_199_5_5()) return true;
     return false;
   }
 
-  private boolean jj_3R_Sequence_204_5_5()
+  private boolean jj_3R_Sequence_199_5_5()
  {
     Token xsp;
-    if (jj_3R_Sequence_207_7_6()) return true;
+    if (jj_3R_Sequence_202_7_6()) return true;
     while (true) {
       xsp = jj_scanpos;
-      if (jj_3R_Sequence_207_7_6()) { jj_scanpos = xsp; break; }
+      if (jj_3R_Sequence_202_7_6()) { jj_scanpos = xsp; break; }
     }
+    return false;
+  }
+
+  private boolean jj_3R_CharacterRange_286_5_17()
+ {
+    if (jj_scan_token(CHAR_RANGE)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_Primary_261_7_12()
+ {
+    if (jj_scan_token(LPAREN)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_Unary_215_5_7()
+ {
+    if (jj_3R_Primary_254_5_8()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_Primary_259_7_11()
+ {
+    if (jj_scan_token(QUOTED_STRING)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_Word_328_5_15()
+ {
+    if (jj_scan_token(WORD)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_Primary_257_7_10()
+ {
+    if (jj_3R_Word_328_5_15()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_Primary_255_7_9()
+ {
+    if (jj_scan_token(NONTERMINAL)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_Primary_254_5_8()
+ {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_Primary_255_7_9()) {
+    jj_scanpos = xsp;
+    if (jj_3R_Primary_257_7_10()) {
+    jj_scanpos = xsp;
+    if (jj_3R_Primary_259_7_11()) {
+    jj_scanpos = xsp;
+    if (jj_3R_Primary_261_7_12()) {
+    jj_scanpos = xsp;
+    if (jj_3R_Primary_269_7_13()) {
+    jj_scanpos = xsp;
+    if (jj_3R_Primary_271_7_14()) return true;
+    }
+    }
+    }
+    }
+    }
+    return false;
+  }
+
+  private boolean jj_3R_Character_277_4_16()
+ {
+    if (jj_scan_token(HEX_CHAR)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_Primary_271_7_14()
+ {
+    if (jj_3R_CharacterRange_286_5_17()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_Sequence_202_7_6()
+ {
+    if (jj_3R_Unary_215_5_7()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_Primary_269_7_13()
+ {
+    if (jj_3R_Character_277_4_16()) return true;
     return false;
   }
 
@@ -565,7 +587,7 @@ String Word() throws ParseException {Token t; String str;
   private Token jj_scanpos, jj_lastpos;
   private int jj_la;
   private int jj_gen;
-  final private int[] jj_la1 = new int[17];
+  final private int[] jj_la1 = new int[19];
   static private int[] jj_la1_0;
   static private int[] jj_la1_1;
   static {
@@ -573,10 +595,10 @@ String Word() throws ParseException {Token t; String str;
 	   jj_la1_init_1();
 	}
 	private static void jj_la1_init_0() {
-	   jj_la1_0 = new int[] {0x800000,0x0,0x40,0x40,0x41,0x40,0x800000,0x40,0x800,0x10804000,0x42600,0x42600,0x200,0x1000,0x1200,0x200,0x10804000,};
+	   jj_la1_0 = new int[] {0x1400000,0x400000,0x40,0x40,0x41,0x40,0x0,0x0,0x1000000,0x40,0x800,0x21004000,0x42600,0x42600,0x200,0x1000,0x1200,0x200,0x21004000,};
 	}
 	private static void jj_la1_init_1() {
-	   jj_la1_1 = new int[] {0x30,0x10,0x0,0x0,0x0,0x0,0x20,0x0,0x0,0x38,0x0,0x0,0x2,0x0,0x2,0x2,0x38,};
+	   jj_la1_1 = new int[] {0x40,0x0,0x0,0x0,0x0,0x0,0x44,0x44,0x40,0x0,0x0,0x70,0x0,0x0,0x4,0x0,0x4,0x4,0x70,};
 	}
   final private JJCalls[] jj_2_rtns = new JJCalls[1];
   private boolean jj_rescan = false;
@@ -593,7 +615,7 @@ String Word() throws ParseException {Token t; String str;
 	 token = new Token();
 	 jj_ntk = -1;
 	 jj_gen = 0;
-	 for (int i = 0; i < 17; i++) jj_la1[i] = -1;
+	 for (int i = 0; i < 19; i++) jj_la1[i] = -1;
 	 for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -608,7 +630,7 @@ String Word() throws ParseException {Token t; String str;
 	 token = new Token();
 	 jj_ntk = -1;
 	 jj_gen = 0;
-	 for (int i = 0; i < 17; i++) jj_la1[i] = -1;
+	 for (int i = 0; i < 19; i++) jj_la1[i] = -1;
 	 for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -619,7 +641,7 @@ String Word() throws ParseException {Token t; String str;
 	 token = new Token();
 	 jj_ntk = -1;
 	 jj_gen = 0;
-	 for (int i = 0; i < 17; i++) jj_la1[i] = -1;
+	 for (int i = 0; i < 19; i++) jj_la1[i] = -1;
 	 for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -638,7 +660,7 @@ String Word() throws ParseException {Token t; String str;
 	 token = new Token();
 	 jj_ntk = -1;
 	 jj_gen = 0;
-	 for (int i = 0; i < 17; i++) jj_la1[i] = -1;
+	 for (int i = 0; i < 19; i++) jj_la1[i] = -1;
 	 for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -648,7 +670,7 @@ String Word() throws ParseException {Token t; String str;
 	 token = new Token();
 	 jj_ntk = -1;
 	 jj_gen = 0;
-	 for (int i = 0; i < 17; i++) jj_la1[i] = -1;
+	 for (int i = 0; i < 19; i++) jj_la1[i] = -1;
 	 for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -658,7 +680,7 @@ String Word() throws ParseException {Token t; String str;
 	 token = new Token();
 	 jj_ntk = -1;
 	 jj_gen = 0;
-	 for (int i = 0; i < 17; i++) jj_la1[i] = -1;
+	 for (int i = 0; i < 19; i++) jj_la1[i] = -1;
 	 for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -789,12 +811,12 @@ String Word() throws ParseException {Token t; String str;
   /** Generate ParseException. */
   public ParseException generateParseException() {
 	 jj_expentries.clear();
-	 boolean[] la1tokens = new boolean[38];
+	 boolean[] la1tokens = new boolean[39];
 	 if (jj_kind >= 0) {
 	   la1tokens[jj_kind] = true;
 	   jj_kind = -1;
 	 }
-	 for (int i = 0; i < 17; i++) {
+	 for (int i = 0; i < 19; i++) {
 	   if (jj_la1[i] == jj_gen) {
 		 for (int j = 0; j < 32; j++) {
 		   if ((jj_la1_0[i] & (1<<j)) != 0) {
@@ -806,7 +828,7 @@ String Word() throws ParseException {Token t; String str;
 		 }
 	   }
 	 }
-	 for (int i = 0; i < 38; i++) {
+	 for (int i = 0; i < 39; i++) {
 	   if (la1tokens[i]) {
 		 jj_expentry = new int[1];
 		 jj_expentry[0] = i;

@@ -64,6 +64,7 @@ TOKEN : {
 |  < RBRACE:  "}" >
 |  < SEMI:    ";" >
 |  < DOT:     "." >
+|  < TILDA:   "~" >
 //|  < RSLASH:  "\\" >
 // 0x5E ASCII and Common name: Unicode: Circumflex Accent
 |  < CARAT:   "^" >    
@@ -83,8 +84,6 @@ TOKEN : {
 // // No escapes, no nelines
 | < #QSTRING1: ( "'"  ( ~["'",  "\n", "\r"])* "'" ) >
 | < #QSTRING2: ( "\"" ( ~["\"", "\n", "\r"])* "\"" ) >
-
-//|  <LABEL: <LBRACK> (~["\n","\r"])* <RBRACK> >
 
 // Needs work for i18n. Exclude surrogates, U+FFFE, U+FFFF
 // May be only BMP (java)
@@ -140,16 +139,12 @@ void BlankLines() : {} {
 
 String Label() : { String str = ""; Token t;}
 {
-     // Hack fix.
-     t = <CHAR_RANGE>
-     { str = removeOuter(t.image); }
-     
-//      <LBRACK>
-//      ( str = Integer()
-//      | str = Word()
-//      )?
-//      <RBRACK>
-      { return str; }
+    <TILDA>
+    ( str = Integer()
+    | str = Word()
+    )?
+    <TILDA>
+    { return str; }
 }
 
 // LHS
